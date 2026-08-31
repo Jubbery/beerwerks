@@ -1,0 +1,52 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Modernist tokens — Flower Shop Beer Werks.
+
+   Values come from docs/design-handoff/design-system/styles.css and the token
+   table in docs/design-handoff/README.md. Do not re-derive any of them by eye.
+
+   The accent ramp is hard-coded because the owners' red is final. The handoff
+   allows this ("hard-code the four steps if the red is now final"); the HSL
+   derivation that produced them is preserved in lib/theme.ts so a future
+   accent change can regenerate the ramp rather than being guessed at.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Ground and ink */
+  --color-bg: #f3f2f2;        /* light page ground */
+  --color-surface: #eae9e9;   /* dashboard ground */
+  --color-text: #201e1d;      /* ink */
+  --color-dark: #0d0c0c;      /* hero, On Tap, menu, header, footer */
+
+  /* Neutrals — secondary text and rules */
+  --color-neutral-300: #d7d3d3;
+  --color-neutral-500: #9b9797;
+  --color-neutral-700: #605d5d;
+  --color-neutral-800: #444141;
+  --color-neutral-900: #2d2b2b;
+
+  /* Accent. --accent-on-dark is not decoration: #ae1800 on #0d0c0c is 2.7:1
+     and fails. #ff583d is 6.25:1 on black. Never use --accent for text on a
+     dark ground, or --accent for body-size text on the light one. */
+  --accent: #ae1800;          /* red fields, button fills, 2px accent rules */
+  --accent-600: #961500;      /* pressed / hover on solid accent */
+  --accent-deep: #4c1000;     /* accent-colored text on the LIGHT ground */
+  --accent-on-dark: #ff583d;  /* accent-colored text on DARK grounds */
+
+  /* Tints — used by the dashboard's topic tag */
+  --accent-200: #ffe0d9;
+  --accent-300: #ffc4b8;      /* ::selection */
+  --accent-800: #7c1405;
+
+  /* Imagery */
+  --hero-dim: 0.7;
+
+  /* Layout */
+  --page-max: 1360px;
+  --page-max-admin: 1200px;
+  --gutter: 24px;
+  --breakpoint-nav: 1040px;   /* reference only; media queries need a literal */
+
+  /* Radius is 0 everywhere. No exceptions — inputs, buttons, cards, map
+     popups, zoom controls. Kept as a token so the intent is explicit. */
+  --radius: 0px;
+}

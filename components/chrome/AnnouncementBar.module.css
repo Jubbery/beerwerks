@@ -1,0 +1,23 @@
+.bar {
+  background: var(--accent);
+  color: #fff;
+  padding: 10px var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.square {
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  flex: none;
+}
+
+.text {
+  letter-spacing: 0.06em;
+}
