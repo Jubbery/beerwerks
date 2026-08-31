@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/modernist-1f0f9702-46bf-4ade-b7ae-a3c554ef3733/styles.css">
+  <script src="_ds/modernist-1f0f9702-46bf-4ade-b7ae-a3c554ef3733/_ds_bundle.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    html { color-scheme: light; }
+    html, body { margin: 0; padding: 0; background: #0d0c0c; }
+    * { box-sizing: border-box; }
+    a { color: var(--fsbw-accent, #ae1800); text-decoration: none; }
+    a:hover { color: var(--fsbw-accent-400, #cd1c00); }
+    input, textarea, select, button { font-family: "Archivo", system-ui, sans-serif; color: #201e1d; }
+    .leaflet-container { background: #eae9e9; font-family: "Archivo", system-ui, sans-serif; }
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip { border-radius: 0; background: #f3f2f2; color: #201e1d; }
+    .leaflet-bar a { color: #201e1d; border-radius: 0 !important; }
+    ::selection { background: #ffc4b8; color: #201e1d; }
+    :focus-visible { outline: 2px solid var(--fsbw-accent, #ae1800); outline-offset: 2px; }
+  </style>
+</helmet>
+
+<div style="font-family: 'Archivo', system-ui, sans-serif; background: #f3f2f2; color: #201e1d; min-height: 100vh; overflow-x: hidden;">
+
+  <sc-if value="{{ showAnnouncement }}" hint-placeholder-val="{{ true }}">
+    <div style="background: var(--fsbw-accent, #ae1800); color: #fff; padding: 10px 24px; display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;">
+      <span style="width: 8px; height: 8px; background: #fff; flex: none;"></span>
+      <span style="letter-spacing: 0.06em;">{{ announcementText }}</span>
+    </div>
+  </sc-if>
+
+  <header style="position: sticky; top: 0; z-index: 50; background: #0d0c0c; border-bottom: 2px solid var(--fsbw-accent, #ae1800);">
+    <div style="max-width: 1360px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px;">
+      <a href="#/" style="display: flex; align-items: center; gap: 14px; flex: none;">
+        <img src="assets/logo.webp" alt="Flower Shop Beer Werks" style="height: 34px; width: auto; display: block; filter: brightness(0) invert(1);">
+      </a>
+
+      <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+        <nav style="display: flex; align-items: center; gap: 34px;">
+          <a href="#/menu" style="color: #f3f2f2; font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap;" style-hover="color: var(--fsbw-accent-on-dark, #ff563c);">Food &amp; Drink</a>
+          <a href="#/events" style="color: #f3f2f2; font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap;" style-hover="color: var(--fsbw-accent-on-dark, #ff563c);">What's On</a>
+          <a href="#/about" style="color: #f3f2f2; font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap;" style-hover="color: var(--fsbw-accent-on-dark, #ff563c);">About</a>
+          <a href="#/location" style="color: #f3f2f2; font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap;" style-hover="color: var(--fsbw-accent-on-dark, #ff563c);">Location</a>
+          <a href="#/contact" style="color: #f3f2f2; font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap;" style-hover="color: var(--fsbw-accent-on-dark, #ff563c);">Contact</a>
+          <sc-if value="{{ showSocialInNav }}" hint-placeholder-val="{{ true }}">
+          <span style="display: flex; align-items: center; gap: 14px; padding-left: 8px; border-left: 2px solid #444141;">
+            <a href="https://www.instagram.com/flowershopbeerwerks" target="_blank" rel="noopener" aria-label="Flower Shop Beer Werks on Instagram" title="Instagram" style="color: #f3f2f2; display: flex; padding: 6px;" style-hover="color: var(--fsbw-accent-on-dark, #ff563c);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61571713204022" target="_blank" rel="noopener" aria-label="Flower Shop Beer Werks on Facebook" title="Facebook" style="color: #f3f2f2; display: flex; padding: 6px;" style-hover="color: var(--fsbw-accent-on-dark, #ff563c);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+            </a>
+          </span>
+          </sc-if>
+          <a href="#/location" style="background: var(--fsbw-accent, #ae1800); color: #fff; padding: 13px 22px; font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap;" style-hover="background: var(--fsbw-accent-600, #961500);">Visit Us</a>
+        </nav>
+      </sc-if>
+
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <button type="button" onClick="{{ openNav }}" aria-label="Open menu" style="background: none; border: 2px solid #f3f2f2; color: #f3f2f2; width: 48px; height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; padding: 0;">
+          <span style="display: block; width: 22px; height: 2px; background: #f3f2f2;"></span>
+          <span style="display: block; width: 22px; height: 2px; background: #f3f2f2;"></span>
+          <span style="display: block; width: 22px; height: 2px; background: #f3f2f2;"></span>
+        </button>
+      </sc-if>
+    </div>
+  </header>
+
+  <sc-if value="{{ navOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; inset: 0; z-index: 100; background: #0d0c0c; display: flex; flex-direction: column; padding: 20px 24px 40px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 48px;">
+        <img src="assets/logo.webp" alt="Flower Shop Beer Werks" style="height: 30px; width: auto; filter: brightness(0) invert(1);">
+        <button type="button" onClick="{{ closeNav }}" aria-label="Close menu" style="background: none; border: 2px solid #f3f2f2; color: #f3f2f2; width: 48px; height: 48px; font-size: 22px; line-height: 1; cursor: pointer;">×</button>
+      </div>
+      <nav style="display: flex; flex-direction: column; gap: 4px; border-top: 2px solid var(--fsbw-accent, #ae1800);">
+        <a href="#/menu" onClick="{{ closeNav }}" style="color: #f3f2f2; font-size: 30px; font-weight: 800; letter-spacing: -0.01em; text-transform: uppercase; padding: 20px 0; border-bottom: 1px solid #444141;">Food &amp; Drink</a>
+        <a href="#/events" onClick="{{ closeNav }}" style="color: #f3f2f2; font-size: 30px; font-weight: 800; text-transform: uppercase; padding: 20px 0; border-bottom: 1px solid #444141;">What's On</a>
+        <a href="#/about" onClick="{{ closeNav }}" style="color: #f3f2f2; font-size: 30px; font-weight: 800; text-transform: uppercase; padding: 20px 0; border-bottom: 1px solid #444141;">About</a>
+        <a href="#/location" onClick="{{ closeNav }}" style="color: #f3f2f2; font-size: 30px; font-weight: 800; text-transform: uppercase; padding: 20px 0; border-bottom: 1px solid #444141;">Location</a>
+        <a href="#/contact" onClick="{{ closeNav }}" style="color: #f3f2f2; font-size: 30px; font-weight: 800; text-transform: uppercase; padding: 20px 0; border-bottom: 1px solid #444141;">Contact</a>
+      </nav>
+      <a href="#/location" onClick="{{ closeNav }}" style="margin-top: 32px; background: var(--fsbw-accent, #ae1800); color: #fff; padding: 20px 24px; font-size: 14px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;">Visit Us</a>
+      <div style="margin-top: 24px; display: flex; gap: 12px;">
+        <a href="https://www.instagram.com/flowershopbeerwerks" target="_blank" rel="noopener" style="flex: 1 1 0; display: flex; align-items: center; gap: 10px; border: 2px solid #444141; color: #f3f2f2; padding: 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          Instagram
+        </a>
+        <a href="https://www.facebook.com/profile.php?id=61571713204022" target="_blank" rel="noopener" style="flex: 1 1 0; display: flex; align-items: center; gap: 10px; border: 2px solid #444141; color: #f3f2f2; padding: 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+          Facebook
+        </a>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <main data-screen-label="Home">
+      <section style="position: relative; background: #0d0c0c; min-height: 74vh; display: flex; align-items: flex-end; overflow: hidden;">
+        <img src="assets/main-bar.webp" alt="The taproom at Flower Shop Beer Werks" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.08) brightness(var(--fsbw-hero-dim, 0.7));">
+        <div style="position: relative; width: 100%; max-width: 1360px; margin: 0 auto; padding: 120px 24px 64px;">
+          <p style="margin: 0 0 20px; color: var(--fsbw-accent-on-dark, #ff563c); font-size: 13px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Brewed in RiNo, Denver</p>
+          <h1 style="margin: 0 0 24px; color: #f3f2f2; font-size: clamp(46px, 10vw, 128px); font-weight: 800; line-height: 0.92; letter-spacing: -0.03em; text-transform: uppercase; max-width: 14ch;">Pull up a stool</h1>
+          <p style="margin: 0 0 40px; color: #d7d3d3; font-size: clamp(16px, 2vw, 21px); line-height: 1.5; max-width: 46ch; text-wrap: pretty;">Small-batch beer and cocktails from Jacob and Ava, poured a block off Delgany. Food truck out front, taps rotating all week.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <a href="#/menu" style="background: var(--fsbw-accent, #ae1800); color: #fff; padding: 18px 28px; font-size: 13px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;" style-hover="background: var(--fsbw-accent-600, #961500);">See the Menu</a>
+            <a href="#/location" style="border: 2px solid #f3f2f2; color: #f3f2f2; padding: 16px 28px; font-size: 13px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;" style-hover="background: #f3f2f2; color: #0d0c0c;">Find Us</a>
+          </div>
+        </div>
+      </section>
+
+      <section style="background: var(--fsbw-accent, #ae1800); color: #fff; border-bottom: 2px solid #0d0c0c;">
+        <div style="max-width: 1360px; margin: 0 auto; padding: 56px 24px;">
+          <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 36px;">
+            <h2 style="margin: 0; font-size: clamp(30px, 5vw, 56px); font-weight: 800; line-height: 1; letter-spacing: -0.02em; text-transform: uppercase;">What's On</h2>
+            <a href="#/events" style="color: #fff; font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; border-bottom: 2px solid #fff; padding-bottom: 4px;" style-hover="color: #0d0c0c;">All Events</a>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2px; background: rgba(255,255,255,0.4);">
+            <sc-for list="{{ events }}" as="ev" hint-placeholder-count="2">
+              <div style="background: var(--fsbw-accent, #ae1800); padding: 28px 24px 32px;">
+                <p style="margin: 0 0 12px; font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.85;">{{ ev.date }}</p>
+                <h3 style="margin: 0 0 10px; font-size: 26px; font-weight: 800; line-height: 1.05; letter-spacing: -0.01em;">{{ ev.title }}</h3>
+                <p style="margin: 0; font-size: 15px; line-height: 1.5; opacity: 0.92;">{{ ev.detail }}</p>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+
+      <section style="background: #f3f2f2; border-bottom: 2px solid #201e1d;">
+        <div style="max-width: 1360px; margin: 0 auto; padding: 80px 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 56px; align-items: center;">
+          <div>
+            <p style="margin: 0 0 18px; color: var(--fsbw-accent-700, #4c1000); font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Who we are</p>
+            <h2 style="margin: 0 0 24px; font-size: clamp(30px, 4.4vw, 54px); font-weight: 800; line-height: 1.02; letter-spacing: -0.02em; text-transform: uppercase;">A brewery run by two people who live here</h2>
+            <p style="margin: 0 0 28px; font-size: 17px; line-height: 1.62; max-width: 52ch; text-wrap: pretty;">Flower Shop Beer Werks is owned by head brewer Jacob Sabo and his wife, Ava Olmstead. We make unique takes on familiar styles, plus bespoke pours built for a particular kitchen, bar, or occasion.</p>
+            <a href="#/about" style="color: #201e1d; font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; border-bottom: 2px solid var(--fsbw-accent, #ae1800); padding-bottom: 5px;" style-hover="color: var(--fsbw-accent-700, #4c1000);">Read our story</a>
+          </div>
+          <div style="border: 2px solid #201e1d;">
+            <img src="assets/tap-handles.webp" alt="Tap handles" style="display: block; width: 100%; height: 100%; max-height: 460px; object-fit: cover; filter: grayscale(1) contrast(1.05);">
+          </div>
+        </div>
+      </section>
+
+      <section style="background: #0d0c0c; color: #f3f2f2;">
+        <div style="max-width: 1360px; margin: 0 auto; padding: 80px 24px;">
+          <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 24px; border-bottom: 2px solid var(--fsbw-accent, #ae1800); margin-bottom: 8px;">
+            <h2 style="margin: 0; font-size: clamp(30px, 5vw, 56px); font-weight: 800; line-height: 1; letter-spacing: -0.02em; text-transform: uppercase;">On Tap</h2>
+            <a href="#/menu" style="color: #f3f2f2; font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; border-bottom: 2px solid var(--fsbw-accent, #ae1800); padding-bottom: 4px;">Full menu</a>
+          </div>
+          <sc-for list="{{ flagshipItems }}" as="it" hint-placeholder-count="5">
+            <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px; padding: 22px 0; border-bottom: 1px solid #444141;">
+              <h3 style="margin: 0; font-size: clamp(22px, 3vw, 34px); font-weight: 800; letter-spacing: -0.01em; text-transform: uppercase; flex: none;">{{ it.name }}</h3>
+              <span style="flex: 1 1 60px; height: 1px; background: #605d5d; min-width: 24px;"></span>
+              <span style="font-size: 15px; color: #d7d3d3; letter-spacing: 0.04em;">{{ it.style }}</span>
+              <span style="font-size: 13px; font-weight: 800; color: var(--fsbw-accent-on-dark, #ff563c); letter-spacing: 0.1em; white-space: nowrap;">{{ it.abv }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section style="background: #f3f2f2;">
+        <div style="max-width: 1360px; margin: 0 auto; padding: 80px 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 48px;">
+          <div>
+            <p style="margin: 0 0 18px; color: var(--fsbw-accent-700, #4c1000); font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Visit</p>
+            <h2 style="margin: 0 0 20px; font-size: clamp(28px, 3.6vw, 44px); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; text-transform: uppercase;">3501 Delgany St<br>Denver, CO 80216</h2>
+            <a href="#/location" style="color: #201e1d; font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; border-bottom: 2px solid var(--fsbw-accent, #ae1800); padding-bottom: 5px;">Directions &amp; map</a>
+          </div>
+          <div>
+            <p style="margin: 0 0 18px; color: var(--fsbw-accent-700, #4c1000); font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Hours</p>
+            <sc-for list="{{ hours }}" as="h" hint-placeholder-count="3">
+              <div style="display: flex; justify-content: space-between; gap: 20px; padding: 12px 0; border-bottom: 1px solid #d7d3d3; font-size: 16px;">
+                <span style="font-weight: 700;">{{ h.label }}</span>
+                <span style="color: #605d5d;">{{ h.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isMenu }}" hint-placeholder-val="{{ false }}">
+    <main data-screen-label="Menu" style="background: #0d0c0c; color: #f3f2f2;">
+      <div style="max-width: 1360px; margin: 0 auto; padding: 72px 24px 96px;">
+        <p style="margin: 0 0 18px; color: var(--fsbw-accent-on-dark, #ff563c); font-size: 13px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Drinks inside, food out front</p>
+        <h1 style="margin: 0 0 20px; font-size: clamp(44px, 9vw, 112px); font-weight: 800; line-height: 0.94; letter-spacing: -0.03em; text-transform: uppercase;">Food &amp; Drink</h1>
+        <p style="margin: 0 0 64px; font-size: 18px; line-height: 1.6; max-width: 56ch; color: #d7d3d3; text-wrap: pretty;">{{ menuNote }}</p>
+
+        <sc-for list="{{ drinkGroups }}" as="g" hint-placeholder-count="4">
+          <section style="margin-bottom: 72px;">
+            <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 20px; padding-bottom: 20px; border-bottom: 2px solid var(--fsbw-accent, #ae1800);">
+              <h2 style="margin: 0; font-size: clamp(26px, 4vw, 44px); font-weight: 800; line-height: 1; letter-spacing: -0.02em; text-transform: uppercase;">{{ g.title }}</h2>
+              <p style="margin: 0; font-size: 14px; color: #9b9797; letter-spacing: 0.04em;">{{ g.note }}</p>
+            </div>
+            <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+              <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px; padding: 24px 0; border-bottom: 1px solid #444141;">
+                <h3 style="margin: 0; font-size: clamp(20px, 2.8vw, 30px); font-weight: 800; letter-spacing: -0.01em; text-transform: uppercase; flex: none;">{{ it.name }}</h3>
+                <span style="flex: 1 1 40px; height: 1px; background: #605d5d; min-width: 20px;"></span>
+                <span style="font-size: 15px; color: #d7d3d3;">{{ it.style }}</span>
+                <span style="font-size: 13px; font-weight: 800; color: var(--fsbw-accent-on-dark, #ff563c); letter-spacing: 0.1em; white-space: nowrap;">{{ it.abv }}</span>
+              </div>
+            </sc-for>
+          </section>
+        </sc-for>
+
+        <section style="border: 2px solid var(--fsbw-accent, #ae1800); padding: 40px 32px 44px;">
+          <p style="margin: 0 0 14px; color: var(--fsbw-accent-on-dark, #ff563c); font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Outside — the food truck</p>
+          <h2 style="margin: 0 0 12px; font-size: clamp(28px, 4.4vw, 48px); font-weight: 800; line-height: 1; letter-spacing: -0.02em; text-transform: uppercase;">{{ foodTruck }}</h2>
+          <p style="margin: 0 0 8px; font-size: 17px; line-height: 1.6; max-width: 56ch; color: #d7d3d3; text-wrap: pretty;">{{ foodBlurb }}</p>
+          <p style="margin: 0 0 28px; font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #f3f2f2;">{{ foodSchedule }}</p>
+          <sc-for list="{{ foodItems }}" as="fi" hint-placeholder-count="3">
+            <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px; padding: 18px 0; border-top: 1px solid #444141;">
+              <h3 style="margin: 0; font-size: 20px; font-weight: 800; text-transform: uppercase; flex: none;">{{ fi.name }}</h3>
+              <span style="flex: 1 1 40px; height: 1px; background: #605d5d; min-width: 20px;"></span>
+              <span style="font-size: 15px; color: #d7d3d3;">{{ fi.note }}</span>
+            </div>
+          </sc-for>
+        </section>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isEvents }}" hint-placeholder-val="{{ false }}">
+    <main data-screen-label="Events" style="background: #f3f2f2;">
+      <div style="max-width: 1360px; margin: 0 auto; padding: 72px 24px 96px;">
+        <p style="margin: 0 0 18px; color: var(--fsbw-accent-700, #4c1000); font-size: 13px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Taproom calendar</p>
+        <h1 style="margin: 0 0 56px; font-size: clamp(44px, 9vw, 112px); font-weight: 800; line-height: 0.94; letter-spacing: -0.03em; text-transform: uppercase;">What's On</h1>
+        <sc-for list="{{ events }}" as="ev" hint-placeholder-count="2">
+          <article style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; padding: 36px 0; border-top: 2px solid #201e1d;">
+            <p style="margin: 0; font-size: 15px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fsbw-accent-700, #4c1000);">{{ ev.date }}</p>
+            <div style="grid-column: span 2;">
+              <h2 style="margin: 0 0 12px; font-size: clamp(26px, 3.6vw, 40px); font-weight: 800; line-height: 1.04; letter-spacing: -0.02em; text-transform: uppercase;">{{ ev.title }}</h2>
+              <p style="margin: 0; font-size: 17px; line-height: 1.6; max-width: 56ch; text-wrap: pretty;">{{ ev.detail }}</p>
+            </div>
+          </article>
+        </sc-for>
+        <div style="border-top: 2px solid #201e1d; padding-top: 32px;">
+          <p style="margin: 0; font-size: 16px; color: #605d5d;">More on the way. Follow along on <a href="https://www.instagram.com/flowershopbeerwerks" target="_blank" rel="noopener" style="border-bottom: 2px solid var(--fsbw-accent, #ae1800); color: #201e1d;">Instagram</a> for taproom updates.</p>
+        </div>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isAbout }}" hint-placeholder-val="{{ false }}">
+    <main data-screen-label="About" style="background: #f3f2f2;">
+      <section style="position: relative; background: #0d0c0c; min-height: 46vh; display: flex; align-items: flex-end; overflow: hidden; border-bottom: 2px solid var(--fsbw-accent, #ae1800);">
+        <img src="assets/tap-handles.webp" alt="Tap handles" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.08) brightness(var(--fsbw-hero-dim, 0.7));">
+        <div style="position: relative; max-width: 1360px; margin: 0 auto; width: 100%; padding: 100px 24px 56px;">
+          <p style="margin: 0 0 16px; color: var(--fsbw-accent-on-dark, #ff563c); font-size: 13px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Since 2025</p>
+          <h1 style="margin: 0; color: #f3f2f2; font-size: clamp(44px, 8vw, 104px); font-weight: 800; line-height: 0.94; letter-spacing: -0.03em; text-transform: uppercase;">Who we are</h1>
+        </div>
+      </section>
+      <div style="max-width: 1360px; margin: 0 auto; padding: 72px 24px 96px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 56px;">
+        <div>
+          <p style="margin: 0 0 28px; font-size: 19px; line-height: 1.62; text-wrap: pretty;">Flower Shop Beer Werks is owned by head brewer Jacob Sabo and his wife, Ava Olmstead. Jacob is also a founding member of the Cheetah Coalition, a brewery co-op designed to incubate new craft breweries for distribution before shouldering the costs of renting or buying a physical location.</p>
+          <p style="margin: 0; font-size: 19px; line-height: 1.62; text-wrap: pretty;">Flower Shop Beer Werks aims to create unique takes on familiar styles, as well as to create a personalized flavor profile for your needs. We also offer customizable restaurant and bar exclusives, rotating varietals, and are always looking for collaboration.</p>
+        </div>
+        <div>
+          <div style="border-top: 2px solid #201e1d; padding-top: 24px; margin-bottom: 40px;">
+            <p style="margin: 0 0 18px; color: var(--fsbw-accent-700, #4c1000); font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">The flagships</p>
+            <sc-for list="{{ flagshipItems }}" as="it" hint-placeholder-count="5">
+              <div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #d7d3d3;">
+                <span style="font-weight: 800; text-transform: uppercase; font-size: 15px;">{{ it.name }}</span>
+                <span style="color: #605d5d; font-size: 15px; text-align: right;">{{ it.style }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="border-top: 2px solid #201e1d; padding-top: 24px;">
+            <p style="margin: 0 0 14px; color: var(--fsbw-accent-700, #4c1000); font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Collaborate</p>
+            <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6;">Bespoke IPA, customizable seltzer, delivery and pricing — reach out to Ava.</p>
+            <a href="#/contact" style="background: var(--fsbw-accent, #ae1800); color: #fff; display: inline-block; padding: 16px 24px; font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;" style-hover="background: var(--fsbw-accent-600, #961500);">Get in touch</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isLocation }}" hint-placeholder-val="{{ false }}">
+    <main data-screen-label="Location" style="background: #f3f2f2;">
+      <div style="max-width: 1360px; margin: 0 auto; padding: 72px 24px 40px;">
+        <p style="margin: 0 0 18px; color: var(--fsbw-accent-700, #4c1000); font-size: 13px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">RiNo, Denver</p>
+        <h1 style="margin: 0 0 48px; font-size: clamp(44px, 9vw, 112px); font-weight: 800; line-height: 0.94; letter-spacing: -0.03em; text-transform: uppercase;">Find Us</h1>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 40px; padding-bottom: 48px;">
+          <div>
+            <p style="margin: 0 0 14px; color: var(--fsbw-accent-700, #4c1000); font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Address</p>
+            <p style="margin: 0 0 18px; font-size: 20px; line-height: 1.5; font-weight: 700;">3501 Delgany St<br>Denver, CO 80216</p>
+            <a href="https://maps.google.com/?q=3501+Delgany+St+Denver+CO+80216" target="_blank" rel="noopener" style="color: #201e1d; font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; border-bottom: 2px solid var(--fsbw-accent, #ae1800); padding-bottom: 5px;">Open in maps</a>
+          </div>
+          <div>
+            <p style="margin: 0 0 14px; color: var(--fsbw-accent-700, #4c1000); font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Hours</p>
+            <sc-for list="{{ hours }}" as="h" hint-placeholder-count="3">
+              <div style="display: flex; justify-content: space-between; gap: 20px; padding: 11px 0; border-bottom: 1px solid #d7d3d3; font-size: 16px;">
+                <span style="font-weight: 700;">{{ h.label }}</span>
+                <span style="color: #605d5d;">{{ h.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div>
+            <p style="margin: 0 0 14px; color: var(--fsbw-accent-700, #4c1000); font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Getting here</p>
+            <p style="margin: 0 0 12px; font-size: 16px; line-height: 1.6;">Street parking on Delgany. A short walk from the 38th &amp; Blake station.</p>
+            <p style="margin: 0; font-size: 16px; line-height: 1.6;">Food truck parks out front — look for it on the curb.</p>
+          </div>
+        </div>
+      </div>
+      <div style="border-top: 2px solid #201e1d; border-bottom: 2px solid #201e1d;">
+        <div ref="{{ mapRef }}" role="application" aria-label="Map of 3501 Delgany St, Denver" style="width: 100%; height: 56vh; min-height: 380px;"></div>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isContact }}" hint-placeholder-val="{{ false }}">
+    <main data-screen-label="Contact" style="background: #f3f2f2;">
+      <div style="max-width: 1360px; margin: 0 auto; padding: 72px 24px 96px;">
+        <p style="margin: 0 0 18px; color: var(--fsbw-accent-700, #4c1000); font-size: 13px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Flower Shop Beer Werks, LLC</p>
+        <h1 style="margin: 0 0 56px; font-size: clamp(44px, 9vw, 112px); font-weight: 800; line-height: 0.94; letter-spacing: -0.03em; text-transform: uppercase;">Contact Us</h1>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 56px;">
+          <div>
+            <sc-if value="{{ contactSent }}" hint-placeholder-val="{{ false }}">
+              <div style="border: 2px solid var(--fsbw-accent, #ae1800); padding: 36px 28px;">
+                <h2 style="margin: 0 0 12px; font-size: 30px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em;">Message sent</h2>
+                <p style="margin: 0 0 24px; font-size: 17px; line-height: 1.6;">Thanks — Ava or Jacob will get back to you at {{ sentEmail }}. Usually within a day or two.</p>
+                <button type="button" onClick="{{ resetContact }}" style="background: none; border: 2px solid #201e1d; color: #201e1d; padding: 14px 22px; font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer;" style-hover="background: #201e1d; color: #f3f2f2;">Send another</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ contactOpen }}" hint-placeholder-val="{{ true }}">
+              <form onSubmit="{{ submitContact }}" style="display: flex; flex-direction: column; gap: 22px;">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <label for="c-name" style="font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;">Name</label>
+                  <input id="c-name" type="text" required="true" value="{{ form.name }}" onChange="{{ onName }}" style="background: #fff; border: 2px solid #201e1d; padding: 14px; font-size: 16px; color: #201e1d;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <label for="c-email" style="font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;">Email</label>
+                  <input id="c-email" type="email" required="true" value="{{ form.email }}" onChange="{{ onEmail }}" style="background: #fff; border: 2px solid #201e1d; padding: 14px; font-size: 16px; color: #201e1d;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <label for="c-phone" style="font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;">Phone (optional)</label>
+                  <input id="c-phone" type="tel" value="{{ form.phone }}" onChange="{{ onPhone }}" style="background: #fff; border: 2px solid #201e1d; padding: 14px; font-size: 16px; color: #201e1d;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <label for="c-topic" style="font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;">What's this about</label>
+                  <select id="c-topic" value="{{ form.topic }}" onChange="{{ onTopic }}" style="background: #fff; border: 2px solid #201e1d; padding: 14px; font-size: 16px; color: #201e1d;">
+                    <option value="General">General question</option>
+                    <option value="Bespoke brew">Bespoke brew or seltzer</option>
+                    <option value="Wholesale">Wholesale or delivery</option>
+                    <option value="Collaboration">Collaboration</option>
+                    <option value="Private event">Private event</option>
+                    <option value="Food truck">Food truck booking</option>
+                  </select>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <label for="c-msg" style="font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;">Message</label>
+                  <textarea id="c-msg" required="true" rows="6" value="{{ form.message }}" onChange="{{ onMessage }}" style="background: #fff; border: 2px solid #201e1d; padding: 14px; font-size: 16px; color: #201e1d; resize: vertical;"></textarea>
+                </div>
+                <button type="submit" style="background: var(--fsbw-accent, #ae1800); color: #fff; border: none; padding: 20px 26px; font-size: 13px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; text-align: left; cursor: pointer;" style-hover="background: var(--fsbw-accent-600, #961500);">Send to the owners</button>
+                <p style="margin: 0; font-size: 13px; color: #605d5d; line-height: 1.5;">Goes to forget_me_not@flowershopbeerwerks.com.</p>
+              </form>
+            </sc-if>
+          </div>
+          <div>
+            <div style="border-top: 2px solid #201e1d; padding-top: 24px; margin-bottom: 36px;">
+              <p style="margin: 0 0 14px; color: var(--fsbw-accent-700, #4c1000); font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Or reach us directly</p>
+              <p style="margin: 0 0 8px; font-size: 17px; font-weight: 700;">Ava Olmstead — Operations Manager</p>
+              <p style="margin: 0 0 6px; font-size: 17px;"><a href="tel:3038171804" style="border-bottom: 2px solid var(--fsbw-accent, #ae1800); color: #201e1d;">(303) 817-1804</a></p>
+              <p style="margin: 0; font-size: 17px;"><a href="mailto:forget_me_not@flowershopbeerwerks.com" style="border-bottom: 2px solid var(--fsbw-accent, #ae1800); color: #201e1d; word-break: break-all;">forget_me_not@flowershopbeerwerks.com</a></p>
+            </div>
+            <div style="border-top: 2px solid #201e1d; padding-top: 24px; margin-bottom: 36px;">
+              <p style="margin: 0 0 14px; color: var(--fsbw-accent-700, #4c1000); font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Follow along</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <a href="https://www.instagram.com/flowershopbeerwerks" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: 9px; border: 2px solid #201e1d; color: #201e1d; padding: 12px 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;" style-hover="background: #201e1d; color: #f3f2f2;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                  Instagram
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=61571713204022" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: 9px; border: 2px solid #201e1d; color: #201e1d; padding: 12px 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;" style-hover="background: #201e1d; color: #f3f2f2;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                  Facebook
+                </a>
+              </div>
+            </div>
+            <div style="border-top: 2px solid #201e1d; padding-top: 24px;">
+              <p style="margin: 0 0 14px; color: var(--fsbw-accent-700, #4c1000); font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Taproom</p>
+              <p style="margin: 0 0 16px; font-size: 17px; line-height: 1.5;">3501 Delgany St<br>Denver, CO 80216</p>
+              <sc-for list="{{ hours }}" as="h" hint-placeholder-count="3">
+                <div style="display: flex; justify-content: space-between; gap: 20px; padding: 10px 0; border-bottom: 1px solid #d7d3d3; font-size: 15px;">
+                  <span style="font-weight: 700;">{{ h.label }}</span>
+                  <span style="color: #605d5d;">{{ h.value }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+    <main data-screen-label="Admin" style="background: #eae9e9; min-height: 80vh;">
+      <sc-if value="{{ needsLogin }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width: 480px; margin: 0 auto; padding: 96px 24px;">
+          <p style="margin: 0 0 16px; color: var(--fsbw-accent-700, #4c1000); font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Owners only</p>
+          <h1 style="margin: 0 0 12px; font-size: 44px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; text-transform: uppercase;">Sign in</h1>
+          <p style="margin: 0 0 32px; font-size: 15px; color: #605d5d; line-height: 1.5;">Demo password: <strong>flowershop</strong>. Real auth gets wired up in development.</p>
+          <form onSubmit="{{ submitLogin }}" style="display: flex; flex-direction: column; gap: 18px;">
+            <input type="password" placeholder="Password" value="{{ password }}" onChange="{{ onPassword }}" style="background: #fff; border: 2px solid #201e1d; padding: 16px; font-size: 16px;">
+            <sc-if value="{{ loginError }}" hint-placeholder-val="{{ false }}">
+              <p style="margin: 0; color: var(--fsbw-accent-700, #4c1000); font-size: 14px; font-weight: 700;">{{ loginError }}</p>
+            </sc-if>
+            <button type="submit" style="background: var(--fsbw-accent, #ae1800); color: #fff; border: none; padding: 18px 24px; font-size: 13px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; text-align: left; cursor: pointer;" style-hover="background: var(--fsbw-accent-600, #961500);">Sign in</button>
+          </form>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAuthed }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 48px 24px 96px;">
+          <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 20px; border-bottom: 2px solid #201e1d;">
+            <div>
+              <p style="margin: 0 0 8px; color: var(--fsbw-accent-700, #4c1000); font-size: 12px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;">Owner dashboard</p>
+              <h1 style="margin: 0; font-size: clamp(30px, 5vw, 48px); font-weight: 800; line-height: 1; letter-spacing: -0.02em; text-transform: uppercase;">Manage the site</h1>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <span style="font-size: 13px; color: #605d5d; font-weight: 700;">{{ saveState }}</span>
+              <button type="button" onClick="{{ doLogout }}" style="background: none; border: 2px solid #201e1d; color: #201e1d; padding: 12px 18px; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;" style-hover="background: #201e1d; color: #f3f2f2;">Sign out</button>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 2px; background: #d7d3d3; margin: 24px 0 40px;">
+            <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
+              <button type="button" onClick="{{ t.onClick }}" style="border: none; padding: 14px 18px; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; background: {{ t.bg }}; color: {{ t.fg }};">{{ t.label }}</button>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ tabIsDrinks }}" hint-placeholder-val="{{ true }}">
+            <section>
+              <sc-for list="{{ adminGroups }}" as="g" hint-placeholder-count="2">
+                <div style="background: #f3f2f2; border: 2px solid #201e1d; padding: 24px; margin-bottom: 20px;">
+                  <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 18px;">
+                    <input type="text" value="{{ g.title }}" onChange="{{ g.onTitle }}" style="flex: 1 1 200px; background: #fff; border: 2px solid #201e1d; padding: 12px; font-size: 17px; font-weight: 800; text-transform: uppercase;">
+                    <input type="text" value="{{ g.note }}" onChange="{{ g.onNote }}" placeholder="Section note" style="flex: 1 1 200px; background: #fff; border: 2px solid #d7d3d3; padding: 12px; font-size: 15px;">
+                  </div>
+                  <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; align-items: stretch;">
+                      <input type="text" value="{{ it.name }}" onChange="{{ it.onName }}" placeholder="Name" style="flex: 2 1 160px; background: #fff; border: 2px solid #d7d3d3; padding: 11px; font-size: 15px; font-weight: 700;">
+                      <input type="text" value="{{ it.style }}" onChange="{{ it.onStyle }}" placeholder="Style" style="flex: 3 1 180px; background: #fff; border: 2px solid #d7d3d3; padding: 11px; font-size: 15px;">
+                      <input type="text" value="{{ it.abv }}" onChange="{{ it.onAbv }}" placeholder="ABV" style="flex: 0 1 110px; background: #fff; border: 2px solid #d7d3d3; padding: 11px; font-size: 15px;">
+                      <button type="button" onClick="{{ it.onRemove }}" aria-label="Remove" style="flex: none; width: 44px; background: none; border: 2px solid var(--fsbw-accent, #ae1800); color: var(--fsbw-accent-700, #4c1000); font-size: 18px; font-weight: 800; cursor: pointer;" style-hover="background: var(--fsbw-accent, #ae1800); color: #fff;">×</button>
+                    </div>
+                  </sc-for>
+                  <button type="button" onClick="{{ g.onAdd }}" style="margin-top: 10px; background: #201e1d; color: #f3f2f2; border: none; padding: 12px 18px; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;" style-hover="background: #444141;">Add item</button>
+                </div>
+              </sc-for>
+              <button type="button" onClick="{{ addGroup }}" style="background: var(--fsbw-accent, #ae1800); color: #fff; border: none; padding: 14px 22px; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;" style-hover="background: var(--fsbw-accent-600, #961500);">Add a menu section</button>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{ tabIsFood }}" hint-placeholder-val="{{ false }}">
+            <section style="background: #f3f2f2; border: 2px solid #201e1d; padding: 24px;">
+              <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px;">
+                <input type="text" value="{{ foodTruck }}" onChange="{{ onFoodTruck }}" placeholder="Truck name" style="background: #fff; border: 2px solid #201e1d; padding: 13px; font-size: 18px; font-weight: 800; text-transform: uppercase;">
+                <input type="text" value="{{ foodSchedule }}" onChange="{{ onFoodSchedule }}" placeholder="Schedule" style="background: #fff; border: 2px solid #d7d3d3; padding: 13px; font-size: 15px;">
+                <textarea rows="3" value="{{ foodBlurb }}" onChange="{{ onFoodBlurb }}" placeholder="Blurb" style="background: #fff; border: 2px solid #d7d3d3; padding: 13px; font-size: 15px; resize: vertical;"></textarea>
+              </div>
+              <sc-for list="{{ adminFoodItems }}" as="fi" hint-placeholder-count="3">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                  <input type="text" value="{{ fi.name }}" onChange="{{ fi.onName }}" placeholder="Item" style="flex: 2 1 160px; background: #fff; border: 2px solid #d7d3d3; padding: 11px; font-size: 15px; font-weight: 700;">
+                  <input type="text" value="{{ fi.note }}" onChange="{{ fi.onNote }}" placeholder="Description" style="flex: 3 1 200px; background: #fff; border: 2px solid #d7d3d3; padding: 11px; font-size: 15px;">
+                  <button type="button" onClick="{{ fi.onRemove }}" aria-label="Remove" style="flex: none; width: 44px; background: none; border: 2px solid var(--fsbw-accent, #ae1800); color: var(--fsbw-accent-700, #4c1000); font-size: 18px; font-weight: 800; cursor: pointer;">×</button>
+                </div>
+              </sc-for>
+              <button type="button" onClick="{{ addFoodItem }}" style="margin-top: 10px; background: #201e1d; color: #f3f2f2; border: none; padding: 12px 18px; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;">Add item</button>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{ tabIsHours }}" hint-placeholder-val="{{ false }}">
+            <section style="background: #f3f2f2; border: 2px solid #201e1d; padding: 24px;">
+              <sc-for list="{{ adminHours }}" as="h" hint-placeholder-count="3">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                  <input type="text" value="{{ h.label }}" onChange="{{ h.onLabel }}" placeholder="Days" style="flex: 2 1 160px; background: #fff; border: 2px solid #d7d3d3; padding: 11px; font-size: 15px; font-weight: 700;">
+                  <input type="text" value="{{ h.value }}" onChange="{{ h.onValue }}" placeholder="Hours" style="flex: 2 1 160px; background: #fff; border: 2px solid #d7d3d3; padding: 11px; font-size: 15px;">
+                  <button type="button" onClick="{{ h.onRemove }}" aria-label="Remove" style="flex: none; width: 44px; background: none; border: 2px solid var(--fsbw-accent, #ae1800); color: var(--fsbw-accent-700, #4c1000); font-size: 18px; font-weight: 800; cursor: pointer;">×</button>
+                </div>
+              </sc-for>
+              <button type="button" onClick="{{ addHour }}" style="margin-top: 10px; background: #201e1d; color: #f3f2f2; border: none; padding: 12px 18px; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;">Add a row</button>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{ tabIsEvents }}" hint-placeholder-val="{{ false }}">
+            <section>
+              <sc-for list="{{ adminEvents }}" as="ev" hint-placeholder-count="2">
+                <div style="background: #f3f2f2; border: 2px solid #201e1d; padding: 20px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px;">
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <input type="text" value="{{ ev.title }}" onChange="{{ ev.onTitle }}" placeholder="Event title" style="flex: 2 1 200px; background: #fff; border: 2px solid #201e1d; padding: 12px; font-size: 16px; font-weight: 800;">
+                    <input type="text" value="{{ ev.date }}" onChange="{{ ev.onDate }}" placeholder="Date" style="flex: 1 1 160px; background: #fff; border: 2px solid #d7d3d3; padding: 12px; font-size: 15px;">
+                    <button type="button" onClick="{{ ev.onRemove }}" aria-label="Remove" style="flex: none; width: 44px; background: none; border: 2px solid var(--fsbw-accent, #ae1800); color: var(--fsbw-accent-700, #4c1000); font-size: 18px; font-weight: 800; cursor: pointer;">×</button>
+                  </div>
+                  <textarea rows="2" value="{{ ev.detail }}" onChange="{{ ev.onDetail }}" placeholder="Details" style="background: #fff; border: 2px solid #d7d3d3; padding: 12px; font-size: 15px; resize: vertical;"></textarea>
+                </div>
+              </sc-for>
+              <button type="button" onClick="{{ addEvent }}" style="background: var(--fsbw-accent, #ae1800); color: #fff; border: none; padding: 14px 22px; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;">Add an event</button>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{ tabIsBanner }}" hint-placeholder-val="{{ false }}">
+            <section style="background: #f3f2f2; border: 2px solid #201e1d; padding: 24px;">
+              <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; font-size: 14px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;">
+                <input type="checkbox" checked="{{ announcementOn }}" onChange="{{ onAnnouncementToggle }}" style="width: 22px; height: 22px; accent-color: var(--fsbw-accent, #ae1800);">
+                Show the banner on every page
+              </label>
+              <input type="text" value="{{ announcementText }}" onChange="{{ onAnnouncementText }}" placeholder="Announcement text" style="width: 100%; background: #fff; border: 2px solid #201e1d; padding: 14px; font-size: 16px;">
+              <div style="margin-top: 24px; background: var(--fsbw-accent, #ae1800); color: #fff; padding: 12px 18px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">{{ announcementText }}</div>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{ tabIsMessages }}" hint-placeholder-val="{{ false }}">
+            <section>
+              <sc-if value="{{ noMessages }}" hint-placeholder-val="{{ false }}">
+                <p style="margin: 0; font-size: 17px; color: #605d5d;">No messages yet. Anything sent from the contact page lands here.</p>
+              </sc-if>
+              <sc-for list="{{ messages }}" as="m" hint-placeholder-count="0">
+                <article style="background: #f3f2f2; border: 2px solid #201e1d; padding: 22px; margin-bottom: 14px;">
+                  <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-bottom: 12px;">
+                    <div>
+                      <p style="margin: 0 0 4px; font-size: 18px; font-weight: 800;">{{ m.name }}</p>
+                      <p style="margin: 0; font-size: 14px; color: #605d5d;">{{ m.email }} · {{ m.phone }}</p>
+                    </div>
+                    <div style="text-align: right;">
+                      <span style="display: inline-block; background: #ffe0d9; color: #7c1405; padding: 5px 10px; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;">{{ m.topic }}</span>
+                      <p style="margin: 8px 0 0; font-size: 13px; color: #605d5d;">{{ m.when }}</p>
+                    </div>
+                  </div>
+                  <p style="margin: 0 0 16px; font-size: 16px; line-height: 1.6; white-space: pre-wrap;">{{ m.message }}</p>
+                  <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <a href="{{ m.replyHref }}" style="border: 2px solid #201e1d; color: #201e1d; padding: 10px 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;">Reply by email</a>
+                    <button type="button" onClick="{{ m.onDelete }}" style="background: none; border: 2px solid var(--fsbw-accent, #ae1800); color: var(--fsbw-accent-700, #4c1000); padding: 10px 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;">Delete</button>
+                  </div>
+                </article>
+              </sc-for>
+            </section>
+          </sc-if>
+
+          <div style="margin-top: 40px; padding-top: 24px; border-top: 2px solid #d7d3d3; display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+            <button type="button" onClick="{{ resetSite }}" style="background: none; border: 2px solid #605d5d; color: #605d5d; padding: 12px 18px; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;">Reset to defaults</button>
+            <p style="margin: 0; font-size: 13px; color: #605d5d;">Changes save automatically and appear on the live pages.</p>
+          </div>
+        </div>
+      </sc-if>
+    </main>
+  </sc-if>
+
+  <footer style="background: #0d0c0c; color: #f3f2f2; border-top: 2px solid var(--fsbw-accent, #ae1800);">
+    <div style="max-width: 1360px; margin: 0 auto; padding: 64px 24px 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 40px;">
+      <div>
+        <img src="assets/logo.webp" alt="Flower Shop Beer Werks" style="height: 30px; width: auto; filter: brightness(0) invert(1); margin-bottom: 20px;">
+        <p style="margin: 0 0 18px; font-size: 15px; line-height: 1.6; color: #9b9797; max-width: 30ch;">Small-batch beer in RiNo. Open daily except Monday.</p>
+        <div style="display: flex; gap: 10px;">
+          <a href="https://www.instagram.com/flowershopbeerwerks" target="_blank" rel="noopener" aria-label="Instagram" style="display: flex; align-items: center; gap: 9px; border: 2px solid #444141; color: #f3f2f2; padding: 11px 14px; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;" style-hover="border-color: var(--fsbw-accent-on-dark, #ff563c); color: var(--fsbw-accent-on-dark, #ff563c);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            Instagram
+          </a>
+          <a href="https://www.facebook.com/profile.php?id=61571713204022" target="_blank" rel="noopener" aria-label="Facebook" style="display: flex; align-items: center; gap: 9px; border: 2px solid #444141; color: #f3f2f2; padding: 11px 14px; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;" style-hover="border-color: var(--fsbw-accent-on-dark, #ff563c); color: var(--fsbw-accent-on-dark, #ff563c);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+            Facebook
+          </a>
+        </div>
+      </div>
+      <div>
+        <p style="margin: 0 0 16px; color: var(--fsbw-accent-on-dark, #ff563c); font-size: 12px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;">Hours</p>
+        <sc-for list="{{ hours }}" as="h" hint-placeholder-count="3">
+          <div style="display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px solid #2d2b2b; font-size: 14px;">
+            <span style="font-weight: 700;">{{ h.label }}</span>
+            <span style="color: #9b9797;">{{ h.value }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div>
+        <p style="margin: 0 0 16px; color: var(--fsbw-accent-on-dark, #ff563c); font-size: 12px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;">Taproom</p>
+        <p style="margin: 0 0 10px; font-size: 15px; line-height: 1.6; color: #d7d3d3;">3501 Delgany St<br>Denver, CO 80216</p>
+        <a href="https://maps.google.com/?q=3501+Delgany+St+Denver+CO+80216" target="_blank" rel="noopener" style="color: #f3f2f2; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; border-bottom: 2px solid var(--fsbw-accent, #ae1800); padding-bottom: 3px;">Find us</a>
+      </div>
+      <div>
+        <p style="margin: 0 0 16px; color: var(--fsbw-accent-on-dark, #ff563c); font-size: 12px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;">Contact</p>
+        <p style="margin: 0 0 8px; font-size: 15px; color: #d7d3d3;">Ava Olmstead<br>Operations Manager</p>
+        <p style="margin: 0 0 6px; font-size: 15px;"><a href="tel:3038171804" style="color: #f3f2f2;">(303) 817-1804</a></p>
+        <p style="margin: 0; font-size: 14px;"><a href="mailto:forget_me_not@flowershopbeerwerks.com" style="color: #f3f2f2; word-break: break-all;">forget_me_not@flowershopbeerwerks.com</a></p>
+      </div>
+    </div>
+    <div style="max-width: 1360px; margin: 0 auto; padding: 20px 24px 40px; border-top: 1px solid #2d2b2b; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center;">
+      <p style="margin: 0; font-size: 12px; color: #9b9797; letter-spacing: 0.08em;">© Flower Shop Beer Werks, LLC 2026</p>
+      <a href="#/admin" style="font-size: 11px; color: #9b9797; letter-spacing: 0.16em; text-transform: uppercase;" style-hover="color: var(--fsbw-accent-on-dark, #ff563c);">Owners</a>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ae1800&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;,&quot;options&quot;:[&quot;#ec3013&quot;,&quot;#dd2b0f&quot;,&quot;#c42408&quot;,&quot;#ae1800&quot;]},&quot;heroDim&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.7,&quot;min&quot;:0.25,&quot;max&quot;:0.9,&quot;step&quot;:0.05,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;showSocialInNav&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Navigation&quot;}}">
+class Component extends DCLogic {
+  state = {
+    route: '#/',
+    isMobile: false,
+    navOpen: false,
+    site: null,
+    authed: false,
+    password: '',
+    loginError: '',
+    tab: 'drinks',
+    messages: [],
+    saveState: '',
+    form: { name: '', email: '', phone: '', topic: 'General', message: '' },
+    sent: false,
+    sentEmail: '',
+  };
+
+  defaults() {
+    return {
+      announcement: { enabled: true, text: 'Grand opening — September 12, 2026' },
+      hours: [
+        { label: 'Monday', value: 'Closed' },
+        { label: 'Tue–Thu, Sun', value: '12pm – 10pm' },
+        { label: 'Fri–Sat', value: '12pm – 12am' },
+      ],
+      menuNote: 'Beer and cocktails are poured inside at the bar. Food comes from the truck parked out front — the lineup changes, so check the panel below before you order.',
+      drinks: [
+        {
+          id: 'flagships',
+          title: 'Flagships',
+          note: 'Always on',
+          items: [
+            { name: 'Cjoors', style: 'Nordic Ale', abv: 'ABV 00.0%' },
+            { name: 'Blank & Blank', style: 'Cederwood Infused IPA', abv: 'ABV 00.0%' },
+            { name: 'Cheetah Coalition', style: 'Lavender Cream Ale', abv: 'ABV 00.0%' },
+            { name: 'Break a Few Bees', style: 'Honey Ale', abv: 'ABV 00.0%' },
+            { name: 'MOP-C', style: 'Cherry Lemon Lime Sour', abv: 'ABV 00.0%' },
+          ],
+        },
+        { id: 'rotating', title: 'Rotating Taps', note: 'Ask what just went on', items: [] },
+        { id: 'cocktails', title: 'Cocktails', note: 'Mixed to order at the bar', items: [] },
+        { id: 'seltzer', title: 'Seltzer', note: 'Customizable — built to order', items: [] },
+        { id: 'na', title: 'Non-Alcoholic', note: 'Soda and zero-proof', items: [] },
+      ],
+      food: {
+        truck: 'Food truck out front',
+        blurb: 'A rotating truck parks on the curb most nights. The kitchen changes, the beer does not.',
+        schedule: 'Wed–Sun · 5pm until the truck runs out',
+        items: [],
+      },
+      events: [
+        { title: 'Grand Opening', date: 'September 12, 2026', detail: 'Doors open at noon. All five flagships on tap, food truck out front.' },
+      ],
+    };
+  }
+
+  /**
+   * Runtime fallbacks for the tweakable props. These must stay equal to the
+   * `default` values in data-props — `default` only seeds the editor, so the
+   * standalone page reads these. The template's `var(--fsbw-*, …)` literals
+   * mirror them too, for first paint and static exports.
+   */
+  themeDefaults() {
+    return { accent: '#ae1800', heroDim: 0.7 };
+  }
+
+  /** The accent red. Tweakable. */
+  accent() {
+    return this.props.accent || this.themeDefaults().accent;
+  }
+
+  /** Mix a hex toward black by `amount` (0–1) to build the pressed/deep steps. */
+  darken(hex, amount) {
+    const h = (hex || '').replace('#', '');
+    if (h.length !== 6) return hex;
+    const p = [0, 2, 4].map((i) => {
+      const v = Math.round(parseInt(h.slice(i, i + 2), 16) * (1 - amount));
+      return Math.max(0, Math.min(255, v));
+    });
+    return '#' + p.map((v) => v.toString(16).padStart(2, '0')).join('');
+  }
+
+  /**
+   * Raise a hex to a target HSL lightness, keeping hue and saturation. Used for
+   * the dark-ground accent: the Modernist guide moves the accent one step
+   * LIGHTER on a dark ground, and a darkened red fails 3:1 on black.
+   */
+  lift(hex, lightness) {
+    const h = (hex || '').replace('#', '');
+    if (h.length !== 6) return hex;
+    const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+    const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+    let hue = 0;
+    if (d) {
+      if (max === r) hue = ((g - b) / d) % 6;
+      else if (max === g) hue = (b - r) / d + 2;
+      else hue = (r - g) / d + 4;
+      hue *= 60;
+      if (hue < 0) hue += 360;
+    }
+    const l0 = (max + min) / 2;
+    const sat = d ? d / (1 - Math.abs(2 * l0 - 1)) : 0;
+    const L = Math.max(l0, lightness);
+    const c = (1 - Math.abs(2 * L - 1)) * sat;
+    const x = c * (1 - Math.abs(((hue / 60) % 2) - 1));
+    const m = L - c / 2;
+    const seg = [[c, x, 0], [x, c, 0], [0, c, x], [0, x, c], [x, 0, c], [c, 0, x]][Math.floor(hue / 60) % 6];
+    return '#' + seg.map((v) => Math.round(Math.max(0, Math.min(255, (v + m) * 255))).toString(16).padStart(2, '0')).join('');
+  }
+
+  /** Publish the accent ramp as custom properties the inline styles read. */
+  applyTheme() {
+    const a = this.accent();
+    const root = document.documentElement.style;
+    root.setProperty('--fsbw-accent', a);
+    root.setProperty('--fsbw-accent-on-dark', this.lift(a, 0.62));
+    root.setProperty('--fsbw-accent-400', this.darken(a, -0.18));
+    root.setProperty('--fsbw-accent-600', this.darken(a, 0.14));
+    root.setProperty('--fsbw-accent-700', this.darken(a, 0.32));
+    root.setProperty('--fsbw-hero-dim', String(this.props.heroDim ?? this.themeDefaults().heroDim));
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.accent !== this.props.accent || prev.heroDim !== this.props.heroDim) this.applyTheme();
+  }
+
+  componentDidMount() {
+    this.applyTheme();
+    this.syncRoute();
+    this._onHash = () => this.syncRoute();
+    window.addEventListener('hashchange', this._onHash);
+    this._onResize = () => {
+      const m = window.innerWidth < 1040;
+      if (m !== this.state.isMobile) this.setState({ isMobile: m, navOpen: false });
+    };
+    this._onResize();
+    window.addEventListener('resize', this._onResize);
+
+    import('./lib/api.js')
+      .then((api) => {
+        this.api = api;
+        return Promise.all([api.loadSite(), api.currentSession(), api.loadMessages()]);
+      })
+      .then(([site, session, messages]) => {
+        this.setState({
+          site: this.migrate(site),
+          authed: !!session,
+          messages: messages || [],
+        });
+      })
+      .catch(() => this.setState({ site: this.defaults() }));
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('hashchange', this._onHash);
+    window.removeEventListener('resize', this._onResize);
+  }
+
+  /**
+   * Fold newly-shipped default sections into content the owner already saved,
+   * so an added menu category (e.g. Cocktails) appears without wiping edits.
+   */
+  migrate(stored) {
+    const base = this.defaults();
+    if (!stored) return base;
+    const site = { ...base, ...stored };
+    site.drinks = Array.isArray(stored.drinks) ? stored.drinks.slice() : base.drinks;
+    base.drinks.forEach((def, i) => {
+      if (!site.drinks.some((g) => g.id === def.id)) {
+        site.drinks.splice(Math.min(i, site.drinks.length), 0, def);
+      }
+    });
+    site.food = { ...base.food, ...(stored.food || {}) };
+    site.announcement = { ...base.announcement, ...(stored.announcement || {}) };
+    return site;
+  }
+
+  mountMap(el) {
+    if (!el || el._fsbwMap) return;
+    const COORD = [39.7695, -104.9943];
+    const start = () => {
+      const L = window.L;
+      if (!L) { this._mapTimer = setTimeout(start, 150); return; }
+      if (el._fsbwMap || !el.isConnected) return;
+      const map = L.map(el, { scrollWheelZoom: false, zoomControl: true }).setView(COORD, 16);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+      const pane = map.getPane('tilePane');
+      if (pane) pane.style.filter = 'grayscale(1) contrast(1.05)';
+      L.marker(COORD, {
+        title: 'Flower Shop Beer Werks',
+        icon: L.divIcon({
+          className: '',
+          html: '<div style="width:18px;height:18px;background:' + this.accent() + ';border:2px solid #0d0c0c"></div>',
+          iconSize: [18, 18],
+          iconAnchor: [9, 9],
+        }),
+      })
+        .addTo(map)
+        .bindPopup('<strong style="letter-spacing:.04em;text-transform:uppercase">Flower Shop Beer Werks</strong><br>3501 Delgany St, Denver, CO 80216')
+        .openPopup();
+      el._fsbwMap = map;
+      setTimeout(() => map.invalidateSize(), 220);
+    };
+    start();
+  }
+
+  syncRoute() {
+    const h = window.location.hash || '#/';
+    this.setState({ route: h.split('?')[0], navOpen: false });
+    window.scrollTo(0, 0);
+  }
+
+  site() {
+    return this.state.site || this.defaults();
+  }
+
+  persist(site) {
+    this.setState({ site, saveState: 'Saved' });
+    if (this.api) this.api.saveSite(site);
+    clearTimeout(this._saveTimer);
+    this._saveTimer = setTimeout(() => this.setState({ saveState: '' }), 1600);
+  }
+
+  edit(fn) {
+    const site = JSON.parse(JSON.stringify(this.site()));
+    fn(site);
+    this.persist(site);
+  }
+
+  renderVals() {
+    const s = this.site();
+    const r = this.state.route;
+    const st = this.state;
+
+    const flagshipGroup = s.drinks.find((g) => g.id === 'flagships') || s.drinks[0] || { items: [] };
+
+    const tabDefs = [
+      ['drinks', 'Drink Menu'],
+      ['food', 'Food Truck'],
+      ['hours', 'Hours'],
+      ['events', 'Events'],
+      ['banner', 'Banner'],
+      ['messages', 'Messages'],
+    ];
+
+    return {
+      showSocialInNav: (this.props.showSocialInNav ?? true) && !st.isMobile,
+      isDesktop: !st.isMobile,
+      isMobile: st.isMobile,
+      navOpen: st.navOpen,
+      openNav: () => this.setState({ navOpen: true }),
+      closeNav: () => this.setState({ navOpen: false }),
+
+      isHome: r === '#/' || r === '' || r === '#',
+      isMenu: r === '#/menu',
+      isEvents: r === '#/events',
+      isAbout: r === '#/about',
+      isLocation: r === '#/location',
+      isContact: r === '#/contact',
+      mapRef: (el) => this.mountMap(el),
+      isAdmin: r === '#/admin',
+
+      showAnnouncement: !!(s.announcement.enabled && s.announcement.text),
+      announcementText: s.announcement.text,
+      announcementOn: !!s.announcement.enabled,
+
+      hours: s.hours,
+      events: s.events,
+      menuNote: s.menuNote,
+      drinkGroups: s.drinks.filter((g) => g.items.length > 0 || g.note),
+      flagshipItems: flagshipGroup.items,
+      foodTruck: s.food.truck,
+      foodBlurb: s.food.blurb,
+      foodSchedule: s.food.schedule,
+      foodItems: s.food.items,
+
+      // Contact form
+      form: st.form,
+      contactSent: st.sent,
+      contactOpen: !st.sent,
+      sentEmail: st.sentEmail,
+      onName: (e) => this.setState({ form: { ...st.form, name: e.target.value } }),
+      onEmail: (e) => this.setState({ form: { ...st.form, email: e.target.value } }),
+      onPhone: (e) => this.setState({ form: { ...st.form, phone: e.target.value } }),
+      onTopic: (e) => this.setState({ form: { ...st.form, topic: e.target.value } }),
+      onMessage: (e) => this.setState({ form: { ...st.form, message: e.target.value } }),
+      submitContact: (e) => {
+        e.preventDefault();
+        const payload = { ...st.form, phone: st.form.phone || '—' };
+        const finish = () => {
+          this.setState({
+            sent: true,
+            sentEmail: payload.email,
+            form: { name: '', email: '', phone: '', topic: 'General', message: '' },
+          });
+          if (this.api) this.api.loadMessages().then((m) => this.setState({ messages: m || [] }));
+        };
+        if (this.api) this.api.submitContact(payload).then(finish);
+        else finish();
+      },
+      resetContact: () => this.setState({ sent: false }),
+
+      // Admin
+      needsLogin: !st.authed,
+      isAuthed: st.authed,
+      password: st.password,
+      loginError: st.loginError,
+      saveState: st.saveState,
+      onPassword: (e) => this.setState({ password: e.target.value, loginError: '' }),
+      submitLogin: (e) => {
+        e.preventDefault();
+        const pw = st.password;
+        const apply = (res) => {
+          if (res.ok) this.setState({ authed: true, password: '', loginError: '' });
+          else this.setState({ loginError: res.error || 'That password does not match.' });
+        };
+        if (this.api) this.api.login(pw).then(apply);
+        else apply({ ok: pw === 'flowershop', error: 'That password does not match.' });
+      },
+      doLogout: () => {
+        if (this.api) this.api.logout();
+        this.setState({ authed: false });
+      },
+      resetSite: () => this.persist(this.defaults()),
+
+      tabs: tabDefs.map(([id, label]) => ({
+        label,
+        bg: st.tab === id ? '#201e1d' : '#f3f2f2',
+        fg: st.tab === id ? '#f3f2f2' : '#201e1d',
+        onClick: () => this.setState({ tab: id }),
+      })),
+      tabIsDrinks: st.tab === 'drinks',
+      tabIsFood: st.tab === 'food',
+      tabIsHours: st.tab === 'hours',
+      tabIsEvents: st.tab === 'events',
+      tabIsBanner: st.tab === 'banner',
+      tabIsMessages: st.tab === 'messages',
+
+      adminGroups: s.drinks.map((g, gi) => ({
+        title: g.title,
+        note: g.note,
+        onTitle: (e) => this.edit((d) => { d.drinks[gi].title = e.target.value; }),
+        onNote: (e) => this.edit((d) => { d.drinks[gi].note = e.target.value; }),
+        onAdd: () => this.edit((d) => { d.drinks[gi].items.push({ name: 'New pour', style: 'Style', abv: 'ABV 0.0%' }); }),
+        items: g.items.map((it, ii) => ({
+          name: it.name,
+          style: it.style,
+          abv: it.abv,
+          onName: (e) => this.edit((d) => { d.drinks[gi].items[ii].name = e.target.value; }),
+          onStyle: (e) => this.edit((d) => { d.drinks[gi].items[ii].style = e.target.value; }),
+          onAbv: (e) => this.edit((d) => { d.drinks[gi].items[ii].abv = e.target.value; }),
+          onRemove: () => this.edit((d) => { d.drinks[gi].items.splice(ii, 1); }),
+        })),
+      })),
+      addGroup: () => this.edit((d) => { d.drinks.push({ id: 'sec_' + Date.now(), title: 'New section', note: '', items: [] }); }),
+
+      onFoodTruck: (e) => this.edit((d) => { d.food.truck = e.target.value; }),
+      onFoodBlurb: (e) => this.edit((d) => { d.food.blurb = e.target.value; }),
+      onFoodSchedule: (e) => this.edit((d) => { d.food.schedule = e.target.value; }),
+      adminFoodItems: s.food.items.map((fi, i) => ({
+        name: fi.name,
+        note: fi.note,
+        onName: (e) => this.edit((d) => { d.food.items[i].name = e.target.value; }),
+        onNote: (e) => this.edit((d) => { d.food.items[i].note = e.target.value; }),
+        onRemove: () => this.edit((d) => { d.food.items.splice(i, 1); }),
+      })),
+      addFoodItem: () => this.edit((d) => { d.food.items.push({ name: 'New item', note: '' }); }),
+
+      adminHours: s.hours.map((h, i) => ({
+        label: h.label,
+        value: h.value,
+        onLabel: (e) => this.edit((d) => { d.hours[i].label = e.target.value; }),
+        onValue: (e) => this.edit((d) => { d.hours[i].value = e.target.value; }),
+        onRemove: () => this.edit((d) => { d.hours.splice(i, 1); }),
+      })),
+      addHour: () => this.edit((d) => { d.hours.push({ label: 'Day', value: '12pm – 10pm' }); }),
+
+      adminEvents: s.events.map((ev, i) => ({
+        title: ev.title,
+        date: ev.date,
+        detail: ev.detail,
+        onTitle: (e) => this.edit((d) => { d.events[i].title = e.target.value; }),
+        onDate: (e) => this.edit((d) => { d.events[i].date = e.target.value; }),
+        onDetail: (e) => this.edit((d) => { d.events[i].detail = e.target.value; }),
+        onRemove: () => this.edit((d) => { d.events.splice(i, 1); }),
+      })),
+      addEvent: () => this.edit((d) => { d.events.push({ title: 'New event', date: 'Date', detail: '' }); }),
+
+      onAnnouncementToggle: (e) => this.edit((d) => { d.announcement.enabled = e.target.checked; }),
+      onAnnouncementText: (e) => this.edit((d) => { d.announcement.text = e.target.value; }),
+
+      noMessages: st.messages.length === 0,
+      messages: st.messages.map((m, i) => ({
+        name: m.name,
+        email: m.email,
+        phone: m.phone,
+        topic: m.topic,
+        message: m.message,
+        when: new Date(m.receivedAt).toLocaleString(),
+        replyHref: 'mailto:' + m.email + '?subject=Re: ' + encodeURIComponent(m.topic || 'Your message'),
+        onDelete: () => {
+          const next = st.messages.filter((_, j) => j !== i);
+          this.setState({ messages: next });
+          if (this.api) this.api.updateMessages(next);
+        },
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>
