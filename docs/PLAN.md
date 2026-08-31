@@ -20,13 +20,30 @@ is the token layer to bring in as-is.
 | Fonts | `next/font/google` → Archivo | Self-hosts and preloads automatically; the handoff asks for self-hosting. |
 | Icons | `lucide-react` | Handoff asks for the real package over hand-inlined paths. |
 | Map | `leaflet` 1.9.4 + `react-leaflet`, dynamically imported with `ssr: false` | Matches the prototype exactly; Leaflet touches `window` at import time. |
-| Data | **Single JSON record + a messages table** behind a `lib/store.ts` interface | See §3 — the concrete backend depends on the hosting answer, so the interface lands first and the adapter swaps underneath. |
+| Hosting | **Vercel** | Decided. First-party Next.js hosting: zero-config deploys, preview URLs, and no server for the owners or anyone else to maintain. |
+| Data | **Neon Postgres** — one JSONB `site_content` row + a `contact_messages` table, behind a `lib/store.ts` interface | Decided. Vercel's filesystem is read-only, so a hosted DB is required. The interface stays so the adapter is swappable and local dev needs no database. |
 | Auth | Shared password hashed in an env var, signed HTTP-only session cookie (`jose`) | Two owners; a shared credential is proportionate. Replaces the prototype's client-side string compare outright. |
 | Email | **Resend**, API key in env | Handoff's suggestion; sends to `forget_me_not@flowershopbeerwerks.com`. |
 | Validation | `zod` | Shared between the client form and the API route. |
 
 ### Rejected / deferred
 
+- **MUI** — asked about, and the answer is no for this build. MUI implements
+  Material Design: rounded corners, elevation shadows, centered button labels,
+  Roboto and its own type scale. Modernist is the deliberate opposite of every
+  one of those — radius 0 everywhere, nothing floats, labels flush left, Archivo
+  throughout. Adopting MUI would mean overriding its theme on nearly every
+  component and still shipping ~90KB of JS to a site that otherwise needs almost
+  none, on pages that are mostly static text and rules.
+
+  The real pull of MUI is accessible form controls for the dashboard, and that
+  is worth taking seriously — but the dashboard is text inputs, textareas, one
+  checkbox and a tab bar, and the handoff specifies its look in the same
+  Modernist language as the public pages (2px borders, radius 0, accent ×
+  buttons). Native elements plus correct labels and ARIA on the tab bar covers
+  it. If a primitive does turn out to be worth pulling in, use a **headless**
+  library (Radix UI, Base UI, React Aria) — they give the accessibility and
+  keyboard behavior with no visual opinion to fight.
 - **Tailwind** — see Styling above.
 - **A CMS (Sanity, Payload)** — the content model is one JSON record edited by
   two people. A CMS is more surface area than the dashboard the design already
@@ -100,37 +117,101 @@ interface Store {
 }
 ```
 
-Adapters, in order of preference once hosting is known:
+Two adapters:
 
-- **Vercel + Neon/Turso** — one `site_content` row (JSONB) + a
-  `contact_messages` table. The default recommendation.
-- **A VPS / container host** — SQLite on a mounted volume, same schema.
-- **Local dev, today** — a JSON file under `.data/`, so page and dashboard work
-  can start before the hosting question is answered.
+- **Production — Neon Postgres.** A `site_content` table holding one JSONB row,
+  and a `contact_messages` table. Accessed over the pooled connection string in
+  `DATABASE_URL`. Schema changes go in `db/migrations/` and run on deploy.
+- **Local dev — a JSON file** under `.data/`, so the site runs with no database
+  and no network. A dev convenience only: Vercel's filesystem is read-only, so
+  this adapter must never be selected in production. Guard it — fail the build
+  or throw at startup if `NODE_ENV === 'production'` and the file adapter is
+  active, rather than silently losing every owner edit.
 
-A serverless filesystem is read-only, so the file adapter is a dev convenience
-only and must not ship as the production adapter.
+Back up the `site_content` row on a schedule. It is the owners' work, it is
+small, and Neon's point-in-time restore covers it — confirm the retention
+window on the chosen plan.
 
 Public pages fetch server-side and cache; `PUT /api/site` calls
 `revalidatePath()` so owner edits appear immediately.
 
 ---
 
-## 4. Security work (all of it replaces prototype affordances)
+## 4. Security
+
+The dashboard is being handed to the owners, so this section is a requirement
+list, not a set of suggestions. Every prototype auth affordance is a demo and
+gets replaced outright.
+
+**Credentials**
 
 - Delete `DEMO_PASSWORD` and the on-screen **"Demo password: flowershop"** hint.
-- Owner password: hash in `OWNER_PASSWORD_HASH` (argon2/bcrypt), never a plaintext env var.
-- Session: signed, HTTP-only, `SameSite=Lax`, `Secure` cookie with an expiry.
-- `PUT /api/site`, `GET|PATCH /api/messages` verify the session server-side —
-  not a client `authed` flag.
-- Rate limit `POST /api/auth/login` and `POST /api/contact` (both unauthenticated).
-- `/admin` gets `robots: noindex`.
-- Contact input validated server-side with the same zod schema as the client;
-  message body escaped in the outgoing email.
+  Neither ships.
+- The owner password lives as an **argon2id hash** in `OWNER_PASSWORD_HASH` —
+  never a plaintext env var, never in the repo. Compare in constant time.
+- Generate a long random password for the owners at handoff and give it to them
+  through a password manager, not email or text.
+
+**Session**
+
+- Signed JWT (`jose`) in an **HTTP-only, `Secure`, `SameSite=Lax`** cookie, with
+  a signing secret in `SESSION_SECRET` (32+ random bytes, rotatable).
+- Fixed expiry — 30 days, so the owners are not re-authenticating constantly,
+  with "Sign out" clearing the cookie server-side.
+- Every write verifies the session **server-side**. `PUT /api/site` and
+  `GET|PATCH /api/messages` must not trust a client `authed` flag; middleware
+  gates `/admin` before the page renders.
+
+**Public endpoints**
+
+- Rate limit `POST /api/auth/login` (per IP, with backoff on repeated failures)
+  and `POST /api/contact`. Both are unauthenticated and both cost money or
+  reputation when abused.
+- The login response must not distinguish "wrong password" from any other
+  failure beyond the single error line the design specifies.
+- Contact input is validated server-side with the same zod schema as the
+  client — the client check is UX, not a control. Cap field lengths.
+- Escape the message body in the outgoing email; a contact form that renders
+  submitted HTML into the owners' inbox is a phishing vector aimed at them.
+- Add a honeypot field and a timing check before reaching for a CAPTCHA.
+
+**Everything else**
+
+- `/admin` gets `robots: noindex`; keep it out of the sitemap.
+- Security headers via `next.config`: HSTS, `X-Content-Type-Options`,
+  `Referrer-Policy`, and a CSP once the Leaflet tile and font origins are known.
+- Secrets live in Vercel's environment variables, scoped per environment.
+  Preview deploys must not share the production database.
+- Owner edits are stored as content and rendered as text — never
+  `dangerouslySetInnerHTML`. An owner typing `<script>` into the banner should
+  see those characters on the page, not run them.
 
 ---
 
-## 5. Design details that are easy to get wrong
+## 5. Making the dashboard safe for the owners to use
+
+Jacob and Ava are not developers and there is no one to call when something
+goes wrong. The dashboard has to fail visibly and never lose work:
+
+- **Never a silent failure.** The prototype saves optimistically on every
+  keystroke and cannot report an error. Production shows three real states —
+  saving, saved, and *failed, with what to do* — and keeps the unsaved text in
+  the field so a dropped connection never eats an edit.
+- **Debounce ~500ms**, then save. No "Save" button to forget, but no save
+  storm either.
+- **`migrate()` is the guard against wiping their work** (§3). Shipping a new
+  menu category must never overwrite content they have already entered.
+- **A "Reset to defaults" button is destructive and unlabeled as such.** It
+  needs a confirmation step before it discards everything they have typed.
+- **Deleting a message is irreversible.** Confirm it too.
+- Keep the free-text fields free text (§1). A date picker that rejects
+  "September 12, 2026" is a support call.
+- Test the whole dashboard on a phone. The owners will edit hours from behind
+  the bar, and the 44px touch targets in the design exist for that reason.
+
+---
+
+## 6. Design details that are easy to get wrong
 
 Pulled out because the handoff flags each one as a bug already hit or a
 contrast failure:
@@ -161,7 +242,7 @@ contrast failure:
 
 ---
 
-## 6. Improvements over the prototype (called for by the handoff)
+## 7. Improvements over the prototype (called for by the handoff)
 
 - Contact form: real inline validation + a pending state (prototype has neither).
 - Dashboard saves: debounce ~500ms with a real save state **including failure**
@@ -171,7 +252,7 @@ contrast failure:
 
 ---
 
-## 7. Phasing
+## 8. Phasing
 
 | Phase | Work | Done when |
 | --- | --- | --- |
@@ -181,34 +262,38 @@ contrast failure:
 | **3 — Public pages** | Home, Menu, Events, About, Location (+ map), Contact UI | All six render at high fidelity, fluid between breakpoints |
 | **4 — Contact backend** | zod schema, rate limit, persist, Resend mail, success panel, validation + pending states | A submitted message arrives by email and lands in storage |
 | **5 — Auth + dashboard** | Login route, session cookie, six editor tabs, debounced save with failure state, Messages panel | Owners can edit every field and see it live; demo hint gone |
-| **6 — Production** | Real store adapter, metadata/SEO/OG, a11y pass, responsive QA, deploy | Live on the real domain |
+| **6 — Production** | Neon adapter + migrations, security headers, metadata/SEO/OG, a11y pass, responsive QA, Vercel deploy | Live on the real domain, owners signed in with their own credential |
 
-Phases 0–3 are unblocked today. Phase 4 needs the email account, phase 6 needs
-the hosting answer.
+Phases 0–3 are unblocked. Phase 4 needs the email account and DNS access;
+phase 6 needs the Neon project and the production domain.
 
 ---
 
-## 8. Open questions
+## 9. Open questions
 
-Blocking for the phases noted; none block phases 0–3.
+Hosting and styling are settled: **Vercel + Neon Postgres**, plain CSS with
+CSS Modules. What is still open, none of it blocking phases 0–3:
 
-1. **Hosting target?** Drives the store adapter and the production DB. Vercel +
-   Neon is the recommendation absent a reason otherwise. *(blocks phase 6)*
+1. **Vercel and Neon accounts.** Created under whose login? These should belong
+   to the business, not to a developer's personal account, so the owners keep
+   control of their own site. *(blocks phase 6)*
 2. **Email provider account.** Resend or Postmark, plus DNS access to verify
    the sending domain — mail from an unverified domain will land in spam.
    *(blocks phase 4)*
-3. **Light-on-dark logo variant.** The `brightness(0) invert(1)` filter is a
+3. **The domain.** Who holds `flowershopbeerwerks.com`, and when does it cut
+   over from Squarespace? *(blocks phase 6)*
+4. **Light-on-dark logo variant.** The `brightness(0) invert(1)` filter is a
    workaround; a proper white-wordmark/red-mark asset from the owners is better.
-4. **"Proudly Serving" partner section** — dropped from the current site for a
+5. **"Proudly Serving" partner section** — dropped from the current site for a
    missing logo asset. Should it return?
-5. **Prices?** Not in the design anywhere. Adding them needs a `price` field on
+6. **Prices?** Not in the design anywhere. Adding them needs a `price` field on
    the item shape and a fourth cell in the Menu Row — the handoff says ask first.
-6. **Map coordinates** `[39.7695, -104.9943]` are approximate and must be
+7. **Map coordinates** `[39.7695, -104.9943]` are approximate and must be
    verified against the real address before launch.
-7. **Real ABVs** — every flagship currently reads the owners' placeholder
+8. **Real ABVs** — every flagship currently reads the owners' placeholder
    `ABV 00.0%`. Owners fill these in via the dashboard, but confirm they know.
 
-## 9. Known gaps carried forward
+## 10. Known gaps carried forward
 
 Deliberate, from the handoff — not defects to fix silently:
 
