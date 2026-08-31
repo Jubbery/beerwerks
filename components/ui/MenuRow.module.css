@@ -1,0 +1,71 @@
+/* The ruled item row, shared by the menu, the home page's On Tap block, and
+   the food truck panel. A name, a leader rule that absorbs the slack, then the
+   trailing detail — the rule is what aligns the eye across the row. */
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 14px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--color-neutral-800);
+}
+
+.name {
+  font-size: clamp(20px, 2.8vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  flex: none;
+}
+
+.leader {
+  flex: 1 1 40px;
+  height: 1px;
+  background: var(--color-neutral-700);
+  min-width: 20px;
+}
+
+.detail {
+  font-size: 15px;
+  color: var(--color-neutral-300);
+}
+
+.abv {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent-on-dark);
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+/* On Tap, on the home page — one step larger. */
+.onTap {
+  gap: 16px;
+  padding: 22px 0;
+}
+
+.onTap .name {
+  font-size: clamp(22px, 3vw, 34px);
+}
+
+.onTap .leader {
+  flex: 1 1 60px;
+  min-width: 24px;
+}
+
+.onTap .detail {
+  letter-spacing: 0.04em;
+}
+
+/* Food truck items — ruled above rather than below, and no ABV. */
+.food {
+  padding: 18px 0;
+  border-bottom: 0;
+  border-top: 1px solid var(--color-neutral-800);
+}
+
+.food .name {
+  font-size: 20px;
+  letter-spacing: normal;
+}

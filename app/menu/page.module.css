@@ -1,0 +1,104 @@
+.page {
+  background: var(--color-dark);
+  color: #f3f2f2;
+}
+
+.inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 72px var(--gutter) 96px;
+}
+
+.kicker {
+  color: var(--accent-on-dark);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: clamp(44px, 9vw, 112px);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.note {
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 56ch;
+  color: var(--color-neutral-300);
+  margin-bottom: 64px;
+}
+
+.section {
+  margin-bottom: 72px;
+}
+
+.sectionHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--accent);
+}
+
+.sectionTitle {
+  font-size: clamp(26px, 4vw, 44px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.sectionNote {
+  font-size: 14px;
+  color: var(--color-neutral-500);
+}
+
+/* ── Food truck panel ────────────────────────────────────────────────────── */
+
+.truck {
+  border: 2px solid var(--accent);
+  padding: 40px 32px 44px;
+}
+
+.truckKicker {
+  color: var(--accent-on-dark);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.truckTitle {
+  font-size: clamp(28px, 4.4vw, 48px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.truckBlurb {
+  font-size: 17px;
+  line-height: 1.6;
+  max-width: 56ch;
+  color: var(--color-neutral-300);
+  margin-bottom: 8px;
+}
+
+.truckSchedule {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f3f2f2;
+  margin-bottom: 28px;
+}

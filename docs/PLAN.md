@@ -18,7 +18,7 @@ is the token layer to bring in as-is.
 | Framework | **Next.js 16 (App Router) + TypeScript** | Handoff's own recommendation. Needs server-rendered public pages, a handful of JSON endpoints, server-side email and a session cookie — all first-party here. |
 | Styling | **Plain CSS: global token layer + CSS Modules per component** | The spec is written as exact CSS values against `styles.css` variables. A utility framework would mean re-deriving every value by eye, which the handoff explicitly forbids. One media query at 1040px replaces the prototype's `isMobile` resize listener. |
 | Fonts | `next/font/google` → Archivo | Self-hosts and preloads automatically; the handoff asks for self-hosting. |
-| Icons | `lucide-react` | Handoff asks for the real package over hand-inlined paths. |
+| Icons | `lucide-react`, pinned to **0.577.0** | Handoff asks for the real package over hand-inlined paths. Lucide v1 removed its brand icons, so 0.577.0 is the last release carrying Instagram and Facebook; its paths are byte-identical to the prototype's. Lucide defaults to round caps, so `strokeLinecap="square"` is passed explicitly to hold the design contract. |
 | Map | `leaflet` 1.9.4 + `react-leaflet`, dynamically imported with `ssr: false` | Matches the prototype exactly; Leaflet touches `window` at import time. |
 | Hosting | **Vercel** | Decided. First-party Next.js hosting: zero-config deploys, preview URLs, and no server for the owners or anyone else to maintain. |
 | Data | **Neon Postgres** — one JSONB `site_content` row + a `contact_messages` table, behind a `lib/store.ts` interface | Decided. Vercel's filesystem is read-only, so a hosted DB is required. The interface stays so the adapter is swappable and local dev needs no database. |
@@ -256,16 +256,30 @@ contrast failure:
 
 | Phase | Work | Done when |
 | --- | --- | --- |
-| **0 — Scaffold** | Next 16 + TS, tokens from `styles.css`, Archivo, assets into `public/`, ESLint/Prettier, `.env.example` | `npm run dev` serves a blank page on the right ground with the right type |
-| **1 — Chrome** | AnnouncementBar, Header (desktop nav + hamburger + full-screen overlay), Footer, the 1040px media query | Chrome matches spec at both breakpoints, overlay closes on link/resize |
-| **2 — Content layer** | Types, `DEFAULTS`, `migrate()`, `Store` interface + dev file adapter, `GET /api/site` | Public pages can read real content |
-| **3 — Public pages** | Home, Menu, Events, About, Location (+ map), Contact UI | All six render at high fidelity, fluid between breakpoints |
-| **4 — Contact backend** | zod schema, rate limit, persist, Resend mail, success panel, validation + pending states | A submitted message arrives by email and lands in storage |
+| **0 — Scaffold** ✅ | Next 16 + TS, tokens from `styles.css`, Archivo, assets into `public/`, ESLint/Prettier, `.env.example` | `npm run dev` serves a blank page on the right ground with the right type |
+| **1 — Chrome** ✅ | AnnouncementBar, Header (desktop nav + hamburger + full-screen overlay), Footer, the 1040px media query | Chrome matches spec at both breakpoints, overlay closes on link/resize |
+| **2 — Content layer** ✅ | Types, `DEFAULTS`, `migrate()`, `Store` interface + dev file adapter, `GET /api/site` | Public pages can read real content |
+| **3 — Public pages** ✅ | Home, Menu, Events, About, Location (+ map), Contact UI | All six render at high fidelity, fluid between breakpoints |
+| **4 — Contact backend** ◐ | zod schema, rate limit, persist, Resend mail, success panel, validation + pending states — all done except the Resend send and a shared rate-limit store | A submitted message arrives by email and lands in storage |
 | **5 — Auth + dashboard** | Login route, session cookie, six editor tabs, debounced save with failure state, Messages panel | Owners can edit every field and see it live; demo hint gone |
 | **6 — Production** | Neon adapter + migrations, security headers, metadata/SEO/OG, a11y pass, responsive QA, Vercel deploy | Live on the real domain, owners signed in with their own credential |
 
-Phases 0–3 are unblocked. Phase 4 needs the email account and DNS access;
-phase 6 needs the Neon project and the production domain.
+Phases 0–3 are complete and pushed. Phase 4 is partly done: the endpoint
+validates, rate-limits, and persists, and the form has inline validation and a
+pending state — what remains is the Resend send (needs the account and DNS) and
+a shared rate-limit store (see below). Phase 6 needs the Neon project and the
+production domain.
+
+**Two things must not reach production as they stand:**
+
+1. `lib/ratelimit.ts` is in-memory. On Vercel each instance keeps its own map
+   and a cold start clears it, so the real limit is (instances × limit). It
+   raises the cost of casual abuse and nothing more. Replace it with a shared
+   store — Upstash Redis, or a small Postgres table — before the public
+   endpoints face real traffic.
+2. Public pages are prerendered static, so owner edits will not appear until
+   something revalidates them. Phase 5 must call `revalidatePath()` from
+   `PUT /api/site`.
 
 ---
 

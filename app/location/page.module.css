@@ -1,0 +1,74 @@
+.page {
+  background: var(--color-bg);
+}
+
+.inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 72px var(--gutter) 40px;
+}
+
+.kicker {
+  color: var(--accent-deep);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.title {
+  font-size: clamp(44px, 9vw, 112px);
+  font-weight: 800;
+  line-height: 0.94;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  margin-bottom: 48px;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 40px;
+  padding-bottom: 48px;
+}
+
+.label {
+  color: var(--accent-deep);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.address {
+  font-size: 20px;
+  line-height: 1.5;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.link {
+  display: inline-block;
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 5px;
+}
+
+.link:hover {
+  color: var(--accent-deep);
+}
+
+.note {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.note + .note {
+  margin-top: 12px;
+}

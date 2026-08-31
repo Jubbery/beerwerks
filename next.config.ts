@@ -15,7 +15,8 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      "img-src 'self' data: blob: https://*.tile.openstreetmap.org",
+      // OSM serves tiles from the bare host as well as subdomains; both are needed.
+      "img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org",
       "style-src 'self' 'unsafe-inline'",
       "script-src 'self'" + (process.env.NODE_ENV === 'development' ? " 'unsafe-eval' 'unsafe-inline'" : ''),
       "font-src 'self'",
