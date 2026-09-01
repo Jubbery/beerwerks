@@ -48,3 +48,60 @@ export function fieldErrors(error: z.ZodError<ContactInput>): FieldErrors {
   }
   return out;
 }
+
+/* ── Site content ─────────────────────────────────────────────────────────
+   PUT /api/site accepts a whole SiteContent record from the browser, so it is
+   validated the same way the contact form is. Owner-authenticated is not the
+   same as trusted: a malformed record here corrupts every public page.
+   ─────────────────────────────────────────────────────────────────────── */
+
+/** Owner-entered free text. Capped, but never reformatted or parsed. */
+const text = (max: number) => z.string().max(max);
+
+export const siteContentSchema = z.object({
+  announcement: z.object({
+    enabled: z.boolean(),
+    text: text(200),
+  }),
+  hours: z
+    .array(z.object({ label: text(60), value: text(60) }))
+    .max(20),
+  menuNote: text(1000),
+  drinks: z
+    .array(
+      z.object({
+        id: z.string().min(1).max(60),
+        title: text(80),
+        note: text(160),
+        items: z
+          .array(z.object({ name: text(120), style: text(160), abv: text(40) }))
+          .max(100),
+      }),
+    )
+    .max(30),
+  food: z.object({
+    truck: text(120),
+    blurb: text(600),
+    schedule: text(160),
+    items: z.array(z.object({ name: text(120), note: text(300) })).max(100),
+  }),
+  events: z
+    .array(z.object({ title: text(160), date: text(80), detail: text(1000) }))
+    .max(50),
+});
+
+/** The dashboard PATCHes the whole messages list (read flags, deletions). */
+export const messagesSchema = z
+  .array(
+    z.object({
+      id: z.string().min(1).max(80),
+      name: text(100),
+      email: text(200),
+      phone: text(40),
+      topic: text(80),
+      message: text(4000),
+      receivedAt: z.string().max(40),
+      read: z.boolean(),
+    }),
+  )
+  .max(1000);

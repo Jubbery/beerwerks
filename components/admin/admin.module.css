@@ -1,0 +1,546 @@
+/* The owner dashboard. One shared sheet: every editor repeats the same card,
+   input, remove-button and add-button pattern, so they are defined once. */
+
+.page {
+  background: var(--color-surface);
+  min-height: 80vh;
+}
+
+/* ── Sign in ─────────────────────────────────────────────────────────────── */
+
+.login {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 96px var(--gutter);
+}
+
+.loginKicker {
+  color: var(--accent-deep);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.loginTitle {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.loginNote {
+  font-size: 15px;
+  color: var(--color-neutral-700);
+  line-height: 1.5;
+  margin-bottom: 32px;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.loginInput {
+  background: #fff;
+  border: 2px solid var(--color-text);
+  padding: 16px;
+  font-size: 16px;
+  color: var(--color-text);
+}
+
+.loginError {
+  color: var(--accent-deep);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.loginSubmit {
+  background: var(--accent);
+  color: #fff;
+  padding: 18px var(--gutter);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.loginSubmit:hover:not(:disabled) {
+  background: var(--accent-600);
+}
+
+.loginSubmit:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* ── Dashboard shell ─────────────────────────────────────────────────────── */
+
+.shell {
+  max-width: var(--page-max-admin);
+  margin: 0 auto;
+  padding: 48px var(--gutter) 96px;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--color-text);
+}
+
+.headerKicker {
+  color: var(--accent-deep);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.headerTitle {
+  font-size: clamp(30px, 5vw, 48px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.headerActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.saveState {
+  font-size: 13px;
+  color: var(--color-neutral-700);
+  font-weight: 700;
+}
+
+/* A failed save has to look different from a successful one, or it reads as
+   "saved" at a glance and the owner walks away from lost work. */
+.saveFailed {
+  color: var(--accent-deep);
+}
+
+.outlineBtn {
+  border: 2px solid var(--color-text);
+  color: var(--color-text);
+  padding: 12px 18px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.outlineBtn:hover {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+/* Gaps over a grey ground read as rules between the tabs. */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  background: var(--color-neutral-300);
+  margin: var(--gutter) 0 40px;
+}
+
+.tab {
+  padding: 14px 18px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.tabActive {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+/* ── Editors ─────────────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--color-bg);
+  border: 2px solid var(--color-text);
+  padding: var(--gutter);
+  margin-bottom: 20px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: stretch;
+}
+
+/* Every input sets an explicit color. Unset, these render white-on-white
+   under a dark system color scheme — a bug already hit on this design. */
+.input {
+  background: #fff;
+  border: 2px solid var(--color-neutral-300);
+  padding: 11px;
+  font-size: 15px;
+  color: var(--color-text);
+  min-width: 0;
+}
+
+.inputStrong {
+  composes: input;
+  border-color: var(--color-text);
+  font-weight: 700;
+}
+
+.textarea {
+  composes: input;
+  resize: vertical;
+  width: 100%;
+}
+
+.remove {
+  flex: none;
+  /* 44px is the minimum touch target — the owners will use this on a phone. */
+  width: 44px;
+  border: 2px solid var(--accent);
+  color: var(--accent-deep);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.remove:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.addBtn {
+  margin-top: 10px;
+  background: var(--color-text);
+  color: var(--color-bg);
+  padding: 12px 18px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.addBtn:hover {
+  background: var(--color-neutral-800);
+}
+
+.addPrimary {
+  background: var(--accent);
+  color: #fff;
+  padding: 14px 22px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.addPrimary:hover {
+  background: var(--accent-600);
+}
+
+.sectionHeadRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.sectionTitleInput {
+  composes: input;
+  flex: 1 1 200px;
+  border-color: var(--color-text);
+  padding: 12px;
+  font-size: 17px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.sectionNoteInput {
+  composes: input;
+  flex: 1 1 200px;
+  padding: 12px;
+}
+
+.grow2 {
+  flex: 2 1 160px;
+}
+
+.grow3 {
+  flex: 3 1 180px;
+}
+
+.abv {
+  flex: 0 1 110px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.truckName {
+  composes: input;
+  border-color: var(--color-text);
+  padding: 13px;
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.eventCard {
+  composes: card;
+  padding: 20px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.eventTitleInput {
+  composes: input;
+  flex: 2 1 200px;
+  border-color: var(--color-text);
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.eventDateInput {
+  composes: input;
+  flex: 1 1 160px;
+  padding: 12px;
+}
+
+/* ── Banner ──────────────────────────────────────────────────────────────── */
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--accent);
+  flex: none;
+}
+
+.bannerInput {
+  composes: input;
+  width: 100%;
+  border-color: var(--color-text);
+  padding: 14px;
+  font-size: 16px;
+}
+
+.bannerPreview {
+  margin-top: var(--gutter);
+  background: var(--accent);
+  color: #fff;
+  padding: 12px 18px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.previewLabel {
+  margin-top: var(--gutter);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-neutral-700);
+}
+
+/* ── Messages ────────────────────────────────────────────────────────────── */
+
+.empty {
+  font-size: 17px;
+  color: var(--color-neutral-700);
+}
+
+.message {
+  composes: card;
+  padding: 22px;
+  margin-bottom: 14px;
+}
+
+.messageHead {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.messageName {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.messageMeta {
+  font-size: 14px;
+  color: var(--color-neutral-700);
+  word-break: break-word;
+}
+
+.messageAside {
+  text-align: right;
+}
+
+.topicTag {
+  display: inline-block;
+  background: var(--accent-200);
+  color: var(--accent-800);
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.messageWhen {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--color-neutral-700);
+}
+
+.messageBody {
+  font-size: 16px;
+  line-height: 1.6;
+  /* Owner-entered text rendered as text. Line breaks are preserved; markup
+     is not, and must never be. */
+  white-space: pre-wrap;
+  margin-bottom: 16px;
+}
+
+.messageActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.replyBtn {
+  border: 2px solid var(--color-text);
+  color: var(--color-text);
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.replyBtn:hover {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+.dangerBtn {
+  border: 2px solid var(--accent);
+  color: var(--accent-deep);
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dangerBtn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ── Tab footer ──────────────────────────────────────────────────────────── */
+
+.footer {
+  margin-top: 40px;
+  padding-top: var(--gutter);
+  border-top: 2px solid var(--color-neutral-300);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.resetBtn {
+  border: 2px solid var(--color-neutral-700);
+  color: var(--color-neutral-700);
+  padding: 12px 18px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.resetBtn:hover {
+  background: var(--color-neutral-700);
+  color: var(--color-bg);
+}
+
+.footerNote {
+  font-size: 13px;
+  color: var(--color-neutral-700);
+}
+
+/* ── Confirm ─────────────────────────────────────────────────────────────── */
+
+.confirm {
+  border: 2px solid var(--accent);
+  background: var(--color-bg);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.confirmText {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.confirmActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.confirmDestroy {
+  background: var(--accent);
+  color: #fff;
+  padding: 12px 18px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.confirmDestroy:hover {
+  background: var(--accent-600);
+}

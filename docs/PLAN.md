@@ -261,7 +261,7 @@ contrast failure:
 | **2 — Content layer** ✅ | Types, `DEFAULTS`, `migrate()`, `Store` interface + dev file adapter, `GET /api/site` | Public pages can read real content |
 | **3 — Public pages** ✅ | Home, Menu, Events, About, Location (+ map), Contact UI | All six render at high fidelity, fluid between breakpoints |
 | **4 — Contact backend** ◐ | zod schema, rate limit, persist, Resend mail, success panel, validation + pending states — all done except the Resend send and a shared rate-limit store | A submitted message arrives by email and lands in storage |
-| **5 — Auth + dashboard** | Login route, session cookie, six editor tabs, debounced save with failure state, Messages panel | Owners can edit every field and see it live; demo hint gone |
+| **5 — Auth + dashboard** ✅ | Login route, session cookie, six editor tabs, debounced save with failure state, Messages panel | Owners can edit every field and see it live; demo hint gone |
 | **6 — Production** | Neon adapter + migrations, security headers, metadata/SEO/OG, a11y pass, responsive QA, Vercel deploy | Live on the real domain, owners signed in with their own credential |
 
 Phases 0–3 are complete and pushed. Phase 4 is partly done: the endpoint
@@ -270,16 +270,32 @@ pending state — what remains is the Resend send (needs the account and DNS) an
 a shared rate-limit store (see below). Phase 6 needs the Neon project and the
 production domain.
 
-**Two things must not reach production as they stand:**
+**One thing must not reach production as it stands:**
 
-1. `lib/ratelimit.ts` is in-memory. On Vercel each instance keeps its own map
-   and a cold start clears it, so the real limit is (instances × limit). It
-   raises the cost of casual abuse and nothing more. Replace it with a shared
-   store — Upstash Redis, or a small Postgres table — before the public
-   endpoints face real traffic.
-2. Public pages are prerendered static, so owner edits will not appear until
-   something revalidates them. Phase 5 must call `revalidatePath()` from
-   `PUT /api/site`.
+`lib/ratelimit.ts` is in-memory. On Vercel each instance keeps its own map and
+a cold start clears it, so the real limit is (instances × limit). It raises the
+cost of casual abuse and nothing more. Replace it with a shared store — Upstash
+Redis, or a small Postgres table — before the public endpoints face real
+traffic. This now also guards the login route, which makes it more pressing.
+
+(The static-page staleness noted here previously is resolved: `PUT /api/site`
+calls `revalidatePath('/', 'layout')`, which cascades to every public page
+because the root layout reads the site record.)
+
+### Setting up the owner credential
+
+Two environment values, both required before anyone can sign in:
+
+- `OWNER_PASSWORD_HASH` — generate with `npm run hash-password -- 'the password'`.
+- `SESSION_SECRET` — `openssl rand -base64 32`.
+
+**An argon2 hash is full of dollar signs, and a `.env` file expands `$name` as
+a variable even inside quotes.** Pasted raw into `.env`, the hash silently
+arrives as fragments and sign-in fails with "that password does not match"
+while the password is correct. In a `.env` file every `$` must be escaped as
+`\$`; in Vercel's UI the raw hash is correct, because values there are stored
+literally. `npm run hash-password` prints both forms, and the app refuses a
+hash that does not start with `$argon2` and says why.
 
 ---
 
