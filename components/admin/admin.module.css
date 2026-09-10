@@ -544,3 +544,12 @@
 .confirmDestroy:hover {
   background: var(--accent-600);
 }
+
+.formError {
+  border: 2px solid var(--accent);
+  color: var(--accent-deep);
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}

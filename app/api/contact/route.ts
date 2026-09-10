@@ -4,10 +4,11 @@ import type { ContactMessage } from '@/lib/content';
 import { getStore } from '@/lib/store';
 import { clientIp, rateLimit } from '@/lib/ratelimit';
 import { contactSchema } from '@/lib/validation';
+import { sendContactNotification } from '@/lib/mail';
 
 /** Public and unauthenticated, so it is validated and rate-limited. */
 export async function POST(request: Request) {
-  const limit = rateLimit(`contact:${clientIp(request)}`, { limit: 5, windowMs: 10 * 60 * 1000 });
+  const limit = await rateLimit(`contact:${clientIp(request)}`, { limit: 5, windowMs: 10 * 60 * 1000 });
   if (!limit.ok) {
     return NextResponse.json(
       { error: 'That is a lot of messages. Give it a few minutes and try again.' },
@@ -58,12 +59,9 @@ export async function POST(request: Request) {
     );
   }
 
-  // TODO(phase 4): send to the owners via Resend once the account and the
-  // verified sending domain exist. A failure here must stay non-fatal —
-  // the message is already stored.
-  if (!process.env.RESEND_API_KEY) {
-    console.warn('[contact] RESEND_API_KEY not set — message stored but not emailed');
-  }
+  // Non-fatal by construction: the message is already stored, so a mail
+  // failure is logged and the sender still gets a success.
+  await sendContactNotification(message);
 
   return NextResponse.json({ ok: true });
 }

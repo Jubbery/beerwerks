@@ -14,10 +14,12 @@ function formatWhen(iso: string): string {
 
 export function MessagesPanel({
   messages,
-  onChange,
+  onDelete,
+  error,
 }: {
   messages: ContactMessage[];
-  onChange: (next: ContactMessage[]) => void;
+  onDelete: (id: string) => void;
+  error?: string;
 }) {
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
 
@@ -33,6 +35,11 @@ export function MessagesPanel({
 
   return (
     <section>
+      {error ? (
+        <p className={styles.formError} role="alert">
+          {error}
+        </p>
+      ) : null}
       {messages.map((message) => (
         <article key={message.id} className={styles.message}>
           <div className={styles.messageHead}>
@@ -56,7 +63,7 @@ export function MessagesPanel({
               confirmLabel="Delete it"
               onConfirm={() => {
                 setConfirmingId(null);
-                onChange(messages.filter((m) => m.id !== message.id));
+                onDelete(message.id);
               }}
               onCancel={() => setConfirmingId(null)}
             />

@@ -10,7 +10,7 @@ import { clientIp, rateLimit } from '@/lib/ratelimit';
  * such password" from anything else hands an attacker information.
  */
 export async function POST(request: Request) {
-  const limit = rateLimit(`login:${clientIp(request)}`, { limit: 8, windowMs: 15 * 60 * 1000 });
+  const limit = await rateLimit(`login:${clientIp(request)}`, { limit: 8, windowMs: 15 * 60 * 1000 });
   if (!limit.ok) {
     return NextResponse.json(
       { error: 'Too many attempts. Wait a few minutes and try again.' },

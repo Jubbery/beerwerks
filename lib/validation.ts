@@ -89,19 +89,3 @@ export const siteContentSchema = z.object({
     .array(z.object({ title: text(160), date: text(80), detail: text(1000) }))
     .max(50),
 });
-
-/** The dashboard PATCHes the whole messages list (read flags, deletions). */
-export const messagesSchema = z
-  .array(
-    z.object({
-      id: z.string().min(1).max(80),
-      name: text(100),
-      email: text(200),
-      phone: text(40),
-      topic: text(80),
-      message: text(4000),
-      receivedAt: z.string().max(40),
-      read: z.boolean(),
-    }),
-  )
-  .max(1000);

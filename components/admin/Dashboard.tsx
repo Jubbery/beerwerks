@@ -20,14 +20,10 @@ const TABS = [
 
 type TabId = (typeof TABS)[number]['id'];
 
-async function put(url: string, body: unknown): Promise<void> {
+async function request(url: string, init: RequestInit): Promise<void> {
   let res: Response;
   try {
-    res = await fetch(url, {
-      method: url === '/api/messages' ? 'PATCH' : 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
+    res = await fetch(url, init);
   } catch {
     throw new Error('No connection — your changes are still here.');
   }
@@ -54,15 +50,16 @@ export function Dashboard({
   const [messages, setMessages] = useState(initialMessages);
   const [confirmingReset, setConfirmingReset] = useState(false);
 
+  const [messageError, setMessageError] = useState('');
+
   const saveSite = useCallback(async (next: SiteContent) => {
-    await put('/api/site', next);
+    await request('/api/site', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(next),
+    });
   }, []);
   const siteSave = useDebouncedSave(saveSite);
-
-  const saveMessages = useCallback(async (next: ContactMessage[]) => {
-    await put('/api/messages', next);
-  }, []);
-  const messagesSave = useDebouncedSave(saveMessages);
 
   // The editors call this on every keystroke; the hook debounces the write.
   const update = useCallback(
@@ -73,15 +70,22 @@ export function Dashboard({
     [siteSave],
   );
 
-  const updateMessages = useCallback(
-    (next: ContactMessage[]) => {
-      setMessages(next);
-      messagesSave.schedule(next);
-    },
-    [messagesSave],
-  );
+  /**
+   * Deleting is immediate, not debounced: it is already behind a confirmation
+   * step, and the row is only removed from the list once the server has
+   * actually deleted it. A failed delete must not look like a successful one.
+   */
+  const deleteMessage = useCallback(async (id: string) => {
+    setMessageError('');
+    try {
+      await request(`/api/messages?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+      setMessages((current) => current.filter((m) => m.id !== id));
+    } catch (e) {
+      setMessageError(e instanceof Error ? e.message : 'Could not delete that message.');
+    }
+  }, []);
 
-  const active = tab === 'messages' ? messagesSave : siteSave;
+  const active = siteSave;
 
   const saveLabel = (() => {
     switch (active.status) {
@@ -153,7 +157,7 @@ export function Dashboard({
         {tab === 'events' ? <EventsEditor site={site} update={update} /> : null}
         {tab === 'banner' ? <BannerEditor site={site} update={update} /> : null}
         {tab === 'messages' ? (
-          <MessagesPanel messages={messages} onChange={updateMessages} />
+          <MessagesPanel messages={messages} onDelete={deleteMessage} error={messageError} />
         ) : null}
       </div>
 

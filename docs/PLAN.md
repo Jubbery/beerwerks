@@ -260,9 +260,9 @@ contrast failure:
 | **1 — Chrome** ✅ | AnnouncementBar, Header (desktop nav + hamburger + full-screen overlay), Footer, the 1040px media query | Chrome matches spec at both breakpoints, overlay closes on link/resize |
 | **2 — Content layer** ✅ | Types, `DEFAULTS`, `migrate()`, `Store` interface + dev file adapter, `GET /api/site` | Public pages can read real content |
 | **3 — Public pages** ✅ | Home, Menu, Events, About, Location (+ map), Contact UI | All six render at high fidelity, fluid between breakpoints |
-| **4 — Contact backend** ◐ | zod schema, rate limit, persist, Resend mail, success panel, validation + pending states — all done except the Resend send and a shared rate-limit store | A submitted message arrives by email and lands in storage |
+| **4 — Contact backend** ✅ | zod schema, rate limit, persist, Resend mail, success panel, validation + pending states | A submitted message arrives by email and lands in storage |
 | **5 — Auth + dashboard** ✅ | Login route, session cookie, six editor tabs, debounced save with failure state, Messages panel | Owners can edit every field and see it live; demo hint gone |
-| **6 — Production** | Neon adapter + migrations, security headers, metadata/SEO/OG, a11y pass, responsive QA, Vercel deploy | Live on the real domain, owners signed in with their own credential |
+| **6 — Production** ◐ | Neon adapter + migrations, security headers, metadata/SEO/OG, a11y pass, responsive QA, Vercel deploy | Live on the real domain, owners signed in with their own credential |
 
 Phases 0–3 are complete and pushed. Phase 4 is partly done: the endpoint
 validates, rate-limits, and persists, and the form has inline validation and a
@@ -270,17 +270,15 @@ pending state — what remains is the Resend send (needs the account and DNS) an
 a shared rate-limit store (see below). Phase 6 needs the Neon project and the
 production domain.
 
-**One thing must not reach production as it stands:**
+Both blockers previously listed here are resolved. The rate limiter is backed
+by the `rate_limits` table, so the window is shared across serverless instances
+rather than per-instance and reset by every cold start — Postgres rather than
+Redis because the database already exists and it is one fewer account for the
+owners to hold. `PUT /api/site` calls `revalidatePath('/', 'layout')`, which
+cascades to every public page because the root layout reads the site record.
 
-`lib/ratelimit.ts` is in-memory. On Vercel each instance keeps its own map and
-a cold start clears it, so the real limit is (instances × limit). It raises the
-cost of casual abuse and nothing more. Replace it with a shared store — Upstash
-Redis, or a small Postgres table — before the public endpoints face real
-traffic. This now also guards the login route, which makes it more pressing.
-
-(The static-page staleness noted here previously is resolved: `PUT /api/site`
-calls `revalidatePath('/', 'layout')`, which cascades to every public page
-because the root layout reads the site record.)
+The schema is created lazily on first use (`ensureSchema`), so there is no
+migration step to remember and the first deploy sets up its own tables.
 
 ### Setting up the owner credential
 
