@@ -1,0 +1,471 @@
+<title>Beer Werks Owner Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800&display=swap">
+
+<style>
+  /* Tokens taken from the site's own Modernist sheet, so the guide looks like
+     the thing it explains. Light is the site's page ground; dark is the ground
+     the site already uses for its header, footer and menu. */
+  :root {
+    --bg: #f3f2f2;
+    --surface: #eae9e9;
+    --card: #ffffff;
+    --text: #201e1d;
+    --muted: #605d5d;
+    --rule: #d7d3d3;
+    --rule-strong: #201e1d;
+    --accent: #ae1800;
+    --accent-text: #4c1000;
+    --accent-tint: #ffe0d9;
+    --on-accent: #ffffff;
+
+    --measure: 68ch;
+    --gutter: 24px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d0c0c;
+      --surface: #1a1918;
+      --card: #201e1d;
+      --text: #f3f2f2;
+      --muted: #9b9797;
+      --rule: #444141;
+      --rule-strong: #605d5d;
+      --accent: #ff583d;
+      --accent-text: #ff583d;
+      --accent-tint: #2d1410;
+      --on-accent: #0d0c0c;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0d0c0c;
+    --surface: #1a1918;
+    --card: #201e1d;
+    --text: #f3f2f2;
+    --muted: #9b9797;
+    --rule: #444141;
+    --rule-strong: #605d5d;
+    --accent: #ff583d;
+    --accent-text: #ff583d;
+    --accent-tint: #2d1410;
+    --on-accent: #0d0c0c;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Archivo", system-ui, -apple-system, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding-inline: var(--gutter);
+    padding-block: 0 96px;
+  }
+
+  /* ── Masthead ─────────────────────────────────────────────────────── */
+
+  .masthead {
+    background: #0d0c0c;
+    color: #f3f2f2;
+    border-bottom: 3px solid var(--accent);
+    margin-bottom: 56px;
+  }
+
+  .masthead-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    padding-inline: var(--gutter);
+    padding-block: 56px 44px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: #ff583d;
+    margin: 0 0 16px;
+  }
+
+  h1 {
+    font-size: clamp(34px, 7vw, 60px);
+    font-weight: 800;
+    line-height: 0.96;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    text-wrap: balance;
+    margin: 0 0 18px;
+  }
+
+  .standfirst {
+    font-size: 18px;
+    line-height: 1.55;
+    color: #d7d3d3;
+    max-width: 54ch;
+    margin: 0;
+  }
+
+  /* ── Sections ─────────────────────────────────────────────────────── */
+
+  section { margin-bottom: 56px; }
+
+  h2 {
+    font-size: clamp(22px, 3.6vw, 30px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    text-wrap: balance;
+    margin: 0 0 6px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--rule-strong);
+  }
+
+  h3 {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0 0 6px;
+  }
+
+  p { margin: 0 0 16px; max-width: var(--measure); text-wrap: pretty; }
+  p:last-child { margin-bottom: 0; }
+
+  .lead { margin-top: 22px; }
+
+  strong { font-weight: 700; }
+
+  code {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+    font-size: 0.88em;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 1px 5px;
+    word-break: break-word;
+  }
+
+  /* ── Numbered sequence (only where order genuinely matters) ───────── */
+
+  .steps { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 2px; }
+
+  .steps li {
+    display: grid;
+    grid-template-columns: 46px 1fr;
+    gap: 18px;
+    align-items: start;
+    background: var(--surface);
+    padding: 18px 20px;
+  }
+
+  .steps .n {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: var(--accent-text);
+    padding-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .steps p { margin: 0; }
+
+  /* ── Tab reference ────────────────────────────────────────────────── */
+
+  .tabs { display: grid; gap: 2px; margin-top: 22px; background: var(--rule); }
+
+  .tab {
+    background: var(--bg);
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 190px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .tab-name {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-text);
+  }
+
+  .tab p { margin: 0; }
+
+  .where {
+    display: block;
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .where::before {
+    content: "Appears on ";
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 11px;
+  }
+
+  /* ── Save states ──────────────────────────────────────────────────── */
+
+  .states { display: grid; gap: 14px; margin-top: 22px; }
+
+  .state {
+    display: grid;
+    grid-template-columns: 132px 1fr;
+    gap: 18px;
+    align-items: baseline;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .state:last-child { border-bottom: 0; padding-bottom: 0; }
+
+  .chip {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    text-align: center;
+    border: 2px solid var(--rule-strong);
+    color: var(--text);
+  }
+
+  .chip.good { border-color: var(--accent); color: var(--accent-text); }
+  .chip.bad { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+  .state p { margin: 0; }
+
+  /* ── Caution ──────────────────────────────────────────────────────── */
+
+  .caution {
+    border: 2px solid var(--accent);
+    padding: 24px;
+    margin-top: 22px;
+  }
+
+  .caution h3 { color: var(--accent-text); }
+  .caution p { max-width: none; }
+  .caution ul { margin: 14px 0 0; padding-left: 20px; }
+  .caution li { margin-bottom: 10px; }
+  .caution li:last-child { margin-bottom: 0; }
+
+  /* ── Contact ──────────────────────────────────────────────────────── */
+
+  .contact {
+    background: #0d0c0c;
+    color: #f3f2f2;
+    padding: 28px 24px;
+    margin-top: 22px;
+    border-top: 3px solid var(--accent);
+  }
+
+  .contact h3 { color: #ff583d; }
+  .contact p { color: #d7d3d3; max-width: none; }
+  .contact a { color: #f3f2f2; text-decoration-color: #ff583d; text-underline-offset: 3px; }
+
+  a { color: var(--accent-text); text-underline-offset: 2px; }
+  a:hover { text-decoration-thickness: 2px; }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  @media (max-width: 620px) {
+    .tab, .state { grid-template-columns: 1fr; gap: 8px; }
+    .steps li { grid-template-columns: 32px 1fr; gap: 12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="eyebrow">Flower Shop Beer Werks</p>
+    <h1>Running your own website</h1>
+    <p class="standfirst">
+      Everything on the site — the beer list, the hours, what's on, the red banner across the
+      top — is yours to change, from any phone or laptop, without asking anyone.
+    </p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <h2>Getting in</h2>
+    <p class="lead">
+      There's no "log in" button on the site, on purpose. The way in is a small
+      <strong>Owners</strong> link in the very bottom-right corner of any page.
+    </p>
+    <ol class="steps">
+      <li>
+        <span class="n">01</span>
+        <p>Scroll to the bottom of any page and tap <strong>Owners</strong>.</p>
+      </li>
+      <li>
+        <span class="n">02</span>
+        <p>Enter the password. It's the same one for both of you — keep it in your password
+          manager rather than a note or a text message.</p>
+      </li>
+      <li>
+        <span class="n">03</span>
+        <p>You'll land on <strong>Manage the site</strong>. You stay signed in for about a
+          month, so you won't be typing that password often.</p>
+      </li>
+    </ol>
+    <p style="margin-top:22px">
+      Bookmark it once you're in. Nothing links to this page from anywhere else, and search
+      engines are told to ignore it.
+    </p>
+  </section>
+
+  <section>
+    <h2>What each tab changes</h2>
+    <p class="lead">Six tabs across the top. Each one edits a different part of the site.</p>
+    <div class="tabs">
+      <div class="tab">
+        <span class="tab-name">Drink Menu</span>
+        <div>
+          <p>Every beer, cocktail and seltzer — name, style and ABV. You can rename a section,
+            add items, remove them, or add a whole new section.</p>
+          <span class="where">Food &amp; Drink, and the On Tap list on the home page</span>
+        </div>
+      </div>
+      <div class="tab">
+        <span class="tab-name">Food Truck</span>
+        <div>
+          <p>Which truck is out front, when it's there, and what they're serving.</p>
+          <span class="where">the panel at the bottom of Food &amp; Drink</span>
+        </div>
+      </div>
+      <div class="tab">
+        <span class="tab-name">Hours</span>
+        <div>
+          <p>Your opening hours. Both halves are free text — write
+            <code>Tue–Thu, Sun</code> and <code>12pm – 10pm</code>, or
+            <code>Closed for a private event</code>. Nothing is fussy about the format.</p>
+          <span class="where">the footer of every page, plus Find Us and Contact</span>
+        </div>
+      </div>
+      <div class="tab">
+        <span class="tab-name">Events</span>
+        <div>
+          <p>Anything happening in the taproom. The date is free text too, so
+            <code>September 12, 2026</code> and <code>Every Thursday</code> both work.</p>
+          <span class="where">What's On, and the red block on the home page</span>
+        </div>
+      </div>
+      <div class="tab">
+        <span class="tab-name">Banner</span>
+        <div>
+          <p>The red strip across the very top of the site. Untick the box to hide it — the
+            preview underneath shows exactly how it'll look.</p>
+          <span class="where">the top of every page</span>
+        </div>
+      </div>
+      <div class="tab">
+        <span class="tab-name">Messages</span>
+        <div>
+          <p>Anything sent through the contact form. <strong>Reply by email</strong> opens your
+            mail app with their address already filled in.</p>
+          <span class="where">nowhere public — these are only for you</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Saving</h2>
+    <p class="lead">
+      There's no Save button. Type, and it saves itself a moment later. The word next to
+      <strong>Sign out</strong> tells you where things stand.
+    </p>
+    <div class="states">
+      <div class="state">
+        <span class="chip">Unsaved…</span>
+        <p>You've just typed something. It saves a half-second after you stop.</p>
+      </div>
+      <div class="state">
+        <span class="chip">Saving…</span>
+        <p>On its way.</p>
+      </div>
+      <div class="state">
+        <span class="chip good">Saved</span>
+        <p>Done, and already live on the site. This clears after a second or two.</p>
+      </div>
+      <div class="state">
+        <span class="chip bad">Not saved</span>
+        <p>Something went wrong — usually a dropped signal. <strong>Your typing is still on
+          screen and hasn't been lost.</strong> Tap <strong>Retry</strong>. If it keeps failing,
+          leave the tab open and try again when you have a better connection.</p>
+      </div>
+    </div>
+    <p style="margin-top:22px">
+      Changes are live the moment they save. Refresh the public page if you want to see it.
+    </p>
+  </section>
+
+  <section>
+    <h2>Two things you can't undo</h2>
+    <div class="caution">
+      <h3>Both ask first — read the question before tapping through</h3>
+      <ul>
+        <li>
+          <strong>Reset to defaults</strong> throws away everything you've typed across every
+          tab and puts back the original wording the site launched with. It is not an "undo my
+          last change" button.
+        </li>
+        <li>
+          <strong>Delete</strong> on a message removes it for good. If there's any chance you'll
+          want it later, reply by email first — that keeps a copy in your inbox.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Worth doing soon</h2>
+    <p class="lead">
+      Two bits of the site are still carrying placeholder text from the design.
+    </p>
+    <p>
+      Every beer currently reads <code>ABV 00.0%</code>. Those are stand-ins — real numbers go in
+      through the Drink Menu tab.
+    </p>
+    <p>
+      <strong>Rotating Taps</strong>, <strong>Cocktails</strong>, <strong>Seltzer</strong> and
+      <strong>Non-Alcoholic</strong> are all empty, as is the food truck list. Until something's
+      added, each shows just its heading on the menu page.
+    </p>
+  </section>
+
+  <section>
+    <h2>If something looks wrong</h2>
+    <p class="lead">
+      Try the ordinary things first: refresh the page, and check you're still signed in. If
+      you've been away a while the session may have lapsed — sign in again and your work will
+      still be in the box where you left it.
+    </p>
+    <div class="contact">
+      <h3>The contact form goes to</h3>
+      <p>
+        <a href="mailto:forget_me_not@flowershopbeerwerks.com">forget_me_not@flowershopbeerwerks.com</a>
+        — the same messages also collect in the Messages tab, so nothing is lost if an email
+        goes astray.
+      </p>
+    </div>
+  </section>
+
+</div>
