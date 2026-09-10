@@ -5,6 +5,7 @@ import { Header } from '@/components/chrome/Header';
 import { Footer } from '@/components/chrome/Footer';
 import { BUSINESS } from '@/lib/constants';
 import { getSiteContent } from '@/lib/site';
+import { SITE_URL } from '@/lib/site-url';
 import '@/styles/globals.css';
 
 // Self-hosted at build time by next/font — no request to Google at runtime,
@@ -16,20 +17,38 @@ const archivo = Archivo({
   variable: '--font-archivo',
 });
 
+const DESCRIPTION =
+  'Small-batch beer and cocktails from Jacob and Ava, poured a block off Delgany in RiNo, Denver. Food truck out front, taps rotating all week.';
+
 export const metadata: Metadata = {
+  // Makes every relative URL below absolute, which link previews require —
+  // iMessage, Slack and the rest will not resolve a relative og:image.
+  metadataBase: new URL(SITE_URL),
   title: {
     default: `${BUSINESS.name} — Small-batch beer in RiNo, Denver`,
     template: `%s — ${BUSINESS.name}`,
   },
-  description:
-    'Small-batch beer and cocktails from Jacob and Ava, poured a block off Delgany in RiNo, Denver. Food truck out front, taps rotating all week.',
+  description: DESCRIPTION,
+  applicationName: BUSINESS.name,
+  alternates: { canonical: '/' },
   openGraph: {
+    // Kept short: iMessage and Slack truncate a long title mid-word.
     title: BUSINESS.name,
-    description: BUSINESS.tagline,
+    description: DESCRIPTION,
+    url: '/',
+    siteName: BUSINESS.name,
     type: 'website',
     locale: 'en_US',
-    siteName: BUSINESS.name,
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: BUSINESS.name,
+    description: DESCRIPTION,
+  },
+  // The card image itself comes from app/opengraph-image.png and
+  // app/twitter-image.png by file convention — Next adds the tags, including
+  // the dimensions that stop clients rendering a small square thumbnail.
+  robots: { index: true, follow: true },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

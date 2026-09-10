@@ -1,6 +1,8 @@
 /* ── Hero ────────────────────────────────────────────────────────────────── */
 
 .hero {
+  /* Dark ground: lift the focus ring so it is actually visible. */
+  --focus-ring: var(--accent-on-dark);
   position: relative;
   background: var(--color-dark);
   min-height: 74vh;
@@ -244,6 +246,8 @@
 /* ── On Tap ──────────────────────────────────────────────────────────────── */
 
 .onTap {
+  /* Dark ground: lift the focus ring so it is actually visible. */
+  --focus-ring: var(--accent-on-dark);
   background: var(--color-dark);
   color: #f3f2f2;
 }

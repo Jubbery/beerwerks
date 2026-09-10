@@ -1,4 +1,6 @@
 .page {
+  /* Dark ground: lift the focus ring so it is actually visible. */
+  --focus-ring: var(--accent-on-dark);
   background: var(--color-dark);
   color: #f3f2f2;
 }

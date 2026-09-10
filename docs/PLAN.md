@@ -262,7 +262,7 @@ contrast failure:
 | **3 — Public pages** ✅ | Home, Menu, Events, About, Location (+ map), Contact UI | All six render at high fidelity, fluid between breakpoints |
 | **4 — Contact backend** ✅ | zod schema, rate limit, persist, Resend mail, success panel, validation + pending states | A submitted message arrives by email and lands in storage |
 | **5 — Auth + dashboard** ✅ | Login route, session cookie, six editor tabs, debounced save with failure state, Messages panel | Owners can edit every field and see it live; demo hint gone |
-| **6 — Production** ◐ | Neon adapter + migrations, security headers, metadata/SEO/OG, a11y pass, responsive QA, Vercel deploy | Live on the real domain, owners signed in with their own credential |
+| **6 — Production** ◐ | Neon adapter, security headers, metadata/SEO/OG, a11y pass, responsive QA, Vercel deploy | Deployed and working on Vercel. Remaining: the domain cutover, and confirming a contact email actually arrives once Resend's domain is verified |
 
 Phases 0–3 are complete and pushed. Phase 4 is partly done: the endpoint
 validates, rate-limits, and persists, and the form has inline validation and a
@@ -297,7 +297,16 @@ hash that does not start with `$argon2` and says why.
 
 ---
 
-## 9. Open questions
+## 9. Handover
+
+`docs/owner-guide.html` is the guide written for Jacob and Ava — signing in, what
+each tab changes, how autosave reports itself, and the two actions that cannot
+be undone. It is published as a page they can open on a phone; keep the two in
+step if the dashboard changes.
+
+Give them the dashboard password through a password manager, not email or text.
+
+## 10. Open questions
 
 Hosting and styling are settled: **Vercel + Neon Postgres**, plain CSS with
 CSS Modules. What is still open, none of it blocking phases 0–3:
@@ -321,7 +330,7 @@ CSS Modules. What is still open, none of it blocking phases 0–3:
 8. **Real ABVs** — every flagship currently reads the owners' placeholder
    `ABV 00.0%`. Owners fill these in via the dashboard, but confirm they know.
 
-## 10. Known gaps carried forward
+## 11. Known gaps carried forward
 
 Deliberate, from the handoff — not defects to fix silently:
 

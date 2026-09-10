@@ -1,4 +1,6 @@
 .overlay {
+  /* Dark ground: lift the focus ring so it is actually visible. */
+  --focus-ring: var(--accent-on-dark);
   position: fixed;
   inset: 0;
   z-index: 100;
