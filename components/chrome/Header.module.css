@@ -1,4 +1,6 @@
 .header {
+  /* Dark ground: lift the focus ring so it is actually visible. */
+  --focus-ring: var(--accent-on-dark);
   position: sticky;
   top: 0;
   z-index: 50;

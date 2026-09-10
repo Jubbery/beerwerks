@@ -1,4 +1,6 @@
 .footer {
+  /* Dark ground: lift the focus ring so it is actually visible. */
+  --focus-ring: var(--accent-on-dark);
   background: var(--color-dark);
   color: #f3f2f2;
   border-top: 2px solid var(--accent);
