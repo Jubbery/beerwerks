@@ -21,16 +21,36 @@ const MAX_AGE_SECONDS = SESSION_DAYS * 24 * 60 * 60;
 
 type SessionPayload = { owner: true };
 
+/** Thrown when SESSION_SECRET is unusable, so the login route can tell the
+ *  difference between a misconfiguration and a wrong password. */
+export class SessionSecretError extends Error {}
+
+const MIN_SECRET_LENGTH = 32;
+
 function secret(): Uint8Array {
   const value = process.env.SESSION_SECRET;
+
   // Refuse to run rather than fall back to a default: a predictable signing
-  // key means anyone can mint a valid owner session.
-  if (!value || value.length < 32) {
-    throw new Error(
-      'SESSION_SECRET is missing or too short (needs 32+ characters). ' +
-        'Generate one with `openssl rand -base64 32`.',
+  // key means anyone can mint a valid owner session. The two failures are
+  // reported separately because "missing" and "too short" have different
+  // fixes, and guessing which one you are looking at wastes real time.
+  if (!value) {
+    throw new SessionSecretError(
+      'SESSION_SECRET is not set. Generate one with `openssl rand -base64 32` ' +
+        'and add it to the environment. On Vercel, add it for every environment ' +
+        'the site is deployed to (Production AND Preview) and redeploy — ' +
+        'changing a variable does not affect deployments that already exist.',
     );
   }
+
+  if (value.length < MIN_SECRET_LENGTH) {
+    throw new SessionSecretError(
+      `SESSION_SECRET is only ${value.length} characters; it needs at least ` +
+        `${MIN_SECRET_LENGTH}. Generate one with \`openssl rand -base64 32\`, ` +
+        'which produces 44.',
+    );
+  }
+
   return new TextEncoder().encode(value);
 }
 

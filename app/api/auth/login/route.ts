@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createSession, verifyOwnerPassword } from '@/lib/auth';
+import { SessionSecretError, createSession, verifyOwnerPassword } from '@/lib/auth';
 import { clientIp, rateLimit } from '@/lib/ratelimit';
 
 /**
@@ -37,12 +37,17 @@ export async function POST(request: Request) {
     await createSession();
   } catch (error) {
     console.error('[auth] could not create a session', error);
+
+    // The correct password was already supplied to reach this line, so the
+    // specific reason is safe to show — and showing it is the difference
+    // between a five-minute fix and an afternoon of guessing.
+    const detail =
+      error instanceof SessionSecretError
+        ? error.message
+        : 'Whoever configured the site needs to check the server logs.';
+
     return NextResponse.json(
-      {
-        error:
-          'That password is right, but the site is not set up to sign you in. ' +
-          'Whoever configured the site needs to check SESSION_SECRET.',
-      },
+      { error: `That password is right, but the site cannot sign you in. ${detail}` },
       { status: 500 },
     );
   }
